@@ -56,13 +56,6 @@ class TaskModelAdapter extends TypeAdapter<TaskModel> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
-      id: (json['id'] as num).toInt(),
-      title: json['title'] as String,
-      projectId: (json['projectId'] as num).toInt(),
-      status: json['status'] as String,
-      priority: json['priority'] as String,
-    );
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'id': instance.id,

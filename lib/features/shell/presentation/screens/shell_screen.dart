@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../core/constants/app_colors.dart';
 
 class ShellScreen extends StatelessWidget {
@@ -30,15 +31,15 @@ class ShellScreen extends StatelessWidget {
               initialLocation: index == navigationShell.currentIndex,
             );
           },
-          destinations: [
+          destinations: const [
             NavigationDestination(
-              icon: const Icon(Icons.home_outlined),
-              selectedIcon: const Icon(Icons.home_rounded),
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded),
               label: 'Projects',
             ),
             NavigationDestination(
-              icon: const Icon(Icons.person_outline_rounded),
-              selectedIcon: const Icon(Icons.person_rounded),
+              icon: Icon(Icons.person_outline_rounded),
+              selectedIcon: Icon(Icons.person_rounded),
               label: 'Profile',
             ),
           ],
