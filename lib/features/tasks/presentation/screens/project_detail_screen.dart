@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
@@ -29,24 +30,6 @@ class ProjectDetailScreen extends StatefulWidget {
 }
 
 class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<TasksBloc>().add(LoadTasks(widget.projectId));
-  }
-
-  void _showAddTaskSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => BlocProvider.value(
-        value: context.read<TasksBloc>(),
-        child: AddTaskBottomSheet(projectId: widget.projectId),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final project = widget.project;
@@ -104,13 +87,19 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    context.read<TasksBloc>().add(LoadTasks(widget.projectId));
+  }
+
   Widget _buildContent(
     BuildContext context,
     List tasks,
     int? updatingTaskId,
   ) {
     if (tasks.isEmpty) {
-      return EmptyStateWidget(
+      return const EmptyStateWidget(
         icon: Icons.task_alt_rounded,
         title: 'No Tasks Yet',
         subtitle: 'Add your first task using the + button.',
@@ -130,8 +119,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
               flex: 2,
               child: _ProjectInfoPanel(project: widget.project!),
             ),
-          if (widget.project != null)
-            const VerticalDivider(width: 1),
+          if (widget.project != null) const VerticalDivider(width: 1),
           Expanded(
             flex: 3,
             child: _TaskListView(
@@ -143,6 +131,87 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
         ],
       ),
     );
+  }
+
+  void _showAddTaskSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => BlocProvider.value(
+        value: context.read<TasksBloc>(),
+        child: AddTaskBottomSheet(projectId: widget.projectId),
+      ),
+    );
+  }
+}
+
+class _ProjectInfoPanel extends StatelessWidget {
+  final ProjectEntity project;
+
+  const _ProjectInfoPanel({required this.project});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppColors.primary, AppColors.secondary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child:
+                const Icon(Icons.folder_rounded, color: Colors.white, size: 32),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Text(project.title, style: AppTextStyles.headingM()),
+          const SizedBox(height: AppSpacing.sm),
+          Text(project.description,
+              style: AppTextStyles.bodyM(color: Colors.grey)),
+          const SizedBox(height: AppSpacing.lg),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              color: _statusColor().withAlpha(25),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: _statusColor().withAlpha(80)),
+            ),
+            child: Text(
+              _statusLabel(),
+              style: AppTextStyles.label(color: _statusColor()),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _statusColor() {
+    return switch (project.status) {
+      ProjectStatus.active => AppColors.statusActive,
+      ProjectStatus.onHold => AppColors.statusOnHold,
+      ProjectStatus.completed => AppColors.statusCompleted,
+    };
+  }
+
+  String _statusLabel() {
+    return switch (project.status) {
+      ProjectStatus.active => 'Active',
+      ProjectStatus.onHold => 'On Hold',
+      ProjectStatus.completed => 'Completed',
+    };
   }
 }
 
@@ -173,73 +242,6 @@ class _TaskListView extends StatelessWidget {
           isUpdating: updatingTaskId == task.id,
         );
       },
-    );
-  }
-}
-
-class _ProjectInfoPanel extends StatelessWidget {
-  final ProjectEntity project;
-
-  const _ProjectInfoPanel({required this.project});
-
-  Color _statusColor() {
-    return switch (project.status) {
-      ProjectStatus.active => AppColors.statusActive,
-      ProjectStatus.onHold => AppColors.statusOnHold,
-      ProjectStatus.completed => AppColors.statusCompleted,
-    };
-  }
-
-  String _statusLabel() {
-    return switch (project.status) {
-      ProjectStatus.active => 'Active',
-      ProjectStatus.onHold => 'On Hold',
-      ProjectStatus.completed => 'Completed',
-    };
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.secondary],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: const Icon(Icons.folder_rounded, color: Colors.white, size: 32),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Text(project.title, style: AppTextStyles.headingM()),
-          const SizedBox(height: AppSpacing.sm),
-          Text(project.description, style: AppTextStyles.bodyM(color: Colors.grey)),
-          const SizedBox(height: AppSpacing.lg),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.sm,
-              vertical: AppSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: _statusColor().withAlpha(25),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _statusColor().withAlpha(80)),
-            ),
-            child: Text(
-              _statusLabel(),
-              style: AppTextStyles.label(color: _statusColor()),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

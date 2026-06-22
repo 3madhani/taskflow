@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -32,7 +33,8 @@ class ProfileScreen extends StatelessWidget {
               snap: true,
               expandedHeight: 120,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text(AppStrings.profile, style: AppTextStyles.headingM()),
+                title:
+                    Text(AppStrings.profile, style: AppTextStyles.headingM()),
                 titlePadding: EdgeInsets.only(
                   left: context.horizontalPadding,
                   bottom: AppSpacing.lg,
@@ -48,7 +50,8 @@ class ProfileScreen extends StatelessWidget {
               sliver: SliverToBoxAdapter(
                 child: BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, authState) {
-                    final user = authState is AuthAuthenticated ? authState.user : null;
+                    final user =
+                        authState is AuthAuthenticated ? authState.user : null;
                     return Column(
                       children: [
                         _buildProfileHeader(context, user?.name, user?.email),
@@ -68,7 +71,29 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, String? name, String? email) {
+  Widget _buildLogoutButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () => _showLogoutDialog(context),
+        icon: const Icon(Icons.logout_rounded, color: AppColors.error),
+        label: Text(
+          AppStrings.logout,
+          style: AppTextStyles.bodyL(color: AppColors.error),
+        ),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+          side: const BorderSide(color: AppColors.error),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileHeader(
+      BuildContext context, String? name, String? email) {
     final displayName = name ?? 'User';
     final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
 
@@ -153,30 +178,10 @@ class ProfileScreen extends StatelessWidget {
               ),
               value: isDark,
               activeThumbColor: AppColors.primary,
-              onChanged: (_) => context.read<ThemeBloc>().add(const ToggleTheme()),
+              onChanged: (_) =>
+                  context.read<ThemeBloc>().add(const ToggleTheme()),
             );
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLogoutButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: () => _showLogoutDialog(context),
-        icon: const Icon(Icons.logout_rounded, color: AppColors.error),
-        label: Text(
-          AppStrings.logout,
-          style: AppTextStyles.bodyL(color: AppColors.error),
-        ),
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-          side: const BorderSide(color: AppColors.error),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
         ),
       ),
     );
@@ -187,7 +192,8 @@ class ProfileScreen extends StatelessWidget {
       context: context,
       builder: (dialogCtx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(AppStrings.logoutConfirmTitle, style: AppTextStyles.headingM()),
+        title: Text(AppStrings.logoutConfirmTitle,
+            style: AppTextStyles.headingM()),
         content: Text(
           AppStrings.logoutConfirmMessage,
           style: AppTextStyles.bodyM(),
@@ -195,14 +201,14 @@ class ProfileScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: Text(AppStrings.cancel),
+            child: const Text(AppStrings.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(dialogCtx).pop();
               context.read<AuthBloc>().add(const LogoutRequested());
             },
-            child: Text(
+            child: const Text(
               AppStrings.logout,
               style: TextStyle(color: AppColors.error),
             ),

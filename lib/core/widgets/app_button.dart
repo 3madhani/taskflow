@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
 import '../responsive/responsive_value.dart';
-
-enum AppButtonVariant { primary, outlined }
 
 class AppButton extends StatelessWidget {
   final String label;
@@ -23,7 +22,8 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = ResponsiveValue<double>(mobile: 48, tablet: 56).resolve(context);
+    final height =
+        const ResponsiveValue<double>(mobile: 48, tablet: 56).resolve(context);
     final isDisabled = isLoading || onPressed == null;
 
     final child = isLoading
@@ -83,3 +83,5 @@ class AppButton extends StatelessWidget {
     );
   }
 }
+
+enum AppButtonVariant { primary, outlined }
