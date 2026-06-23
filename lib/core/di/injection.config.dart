@@ -1,3 +1,9 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// InjectableConfigGenerator
+// **************************************************************************
+
 // ignore_for_file: type=lint
 // coverage:ignore-file
 
@@ -52,6 +58,7 @@ import 'package:taskflow/features/tasks/presentation/bloc/tasks_bloc.dart'
     as _i61;
 
 extension GetItInjectableX on _i174.GetIt {
+// initializes the registration of main-scope dependencies inside of GetIt
   _i174.GetIt init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
@@ -62,18 +69,18 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     gh.singleton<_i734.HiveStorage>(() => const _i734.HiveStorage());
+    gh.factory<_i768.AuthRemoteDatasource>(
+        () => _i768.AuthRemoteDatasource(gh<_i734.HiveStorage>()));
     gh.factory<_i849.ProjectsLocalDatasource>(
         () => _i849.ProjectsLocalDatasource(gh<_i734.HiveStorage>()));
     gh.factory<_i275.TasksLocalDatasource>(
         () => _i275.TasksLocalDatasource(gh<_i734.HiveStorage>()));
     gh.singleton<_i633.ThemeBloc>(
         () => _i633.ThemeBloc(gh<_i734.HiveStorage>()));
+    gh.factory<_i697.AuthRepository>(
+        () => _i860.AuthRepositoryImpl(gh<_i768.AuthRemoteDatasource>()));
     gh.singleton<_i209.DioClient>(
         () => _i209.DioClient(gh<_i734.HiveStorage>()));
-    gh.factory<_i768.AuthRemoteDatasource>(() => _i768.AuthRemoteDatasource(
-          gh<_i209.DioClient>(),
-          gh<_i734.HiveStorage>(),
-        ));
     gh.factory<_i981.ProjectsRemoteDatasource>(
         () => _i981.ProjectsRemoteDatasource(gh<_i209.DioClient>()));
     gh.factory<_i925.TasksRemoteDatasource>(
@@ -82,12 +89,22 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i981.ProjectsRemoteDatasource>(),
           gh<_i849.ProjectsLocalDatasource>(),
         ));
+    gh.factory<_i787.LoginUseCase>(
+        () => _i787.LoginUseCase(gh<_i697.AuthRepository>()));
+    gh.factory<_i469.LogoutUseCase>(
+        () => _i469.LogoutUseCase(gh<_i697.AuthRepository>()));
+    gh.factory<_i437.RegisterUseCase>(
+        () => _i437.RegisterUseCase(gh<_i697.AuthRepository>()));
     gh.factory<_i255.GetProjectsUseCase>(
         () => _i255.GetProjectsUseCase(gh<_i198.ProjectsRepository>()));
-    gh.factory<_i697.AuthRepository>(
-        () => _i860.AuthRepositoryImpl(gh<_i768.AuthRemoteDatasource>()));
     gh.factory<_i794.ProjectsBloc>(
         () => _i794.ProjectsBloc(gh<_i255.GetProjectsUseCase>()));
+    gh.factory<_i662.AuthBloc>(() => _i662.AuthBloc(
+          gh<_i787.LoginUseCase>(),
+          gh<_i437.RegisterUseCase>(),
+          gh<_i469.LogoutUseCase>(),
+          gh<_i697.AuthRepository>(),
+        ));
     gh.factory<_i541.TasksRepository>(() => _i536.TasksRepositoryImpl(
           gh<_i925.TasksRemoteDatasource>(),
           gh<_i275.TasksLocalDatasource>(),
@@ -98,18 +115,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i437.GetTasksUseCase(gh<_i541.TasksRepository>()));
     gh.factory<_i435.UpdateTaskStatusUseCase>(
         () => _i435.UpdateTaskStatusUseCase(gh<_i541.TasksRepository>()));
-    gh.factory<_i787.LoginUseCase>(
-        () => _i787.LoginUseCase(gh<_i697.AuthRepository>()));
-    gh.factory<_i469.LogoutUseCase>(
-        () => _i469.LogoutUseCase(gh<_i697.AuthRepository>()));
-    gh.factory<_i437.RegisterUseCase>(
-        () => _i437.RegisterUseCase(gh<_i697.AuthRepository>()));
-    gh.factory<_i662.AuthBloc>(() => _i662.AuthBloc(
-          gh<_i787.LoginUseCase>(),
-          gh<_i437.RegisterUseCase>(),
-          gh<_i469.LogoutUseCase>(),
-          gh<_i697.AuthRepository>(),
-        ));
     gh.factory<_i61.TasksBloc>(() => _i61.TasksBloc(
           gh<_i437.GetTasksUseCase>(),
           gh<_i435.UpdateTaskStatusUseCase>(),

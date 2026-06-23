@@ -53,6 +53,12 @@ class ProjectModelAdapter extends TypeAdapter<ProjectModel> {
 // JsonSerializableGenerator
 // **************************************************************************
 
+ProjectModel _$ProjectModelFromJson(Map<String, dynamic> json) => ProjectModel(
+      id: (json['id'] as num).toInt(),
+      title: json['title'] as String,
+      description: json['description'] as String,
+      status: json['status'] as String,
+    );
 
 Map<String, dynamic> _$ProjectModelToJson(ProjectModel instance) =>
     <String, dynamic>{

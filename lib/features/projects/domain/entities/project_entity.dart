@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
+import '../../../../core/enums/app_enums.dart';
 
-enum ProjectStatus { active, onHold, completed }
+export '../../../../core/enums/app_enums.dart' show ProjectStatus;
+
 
 class ProjectEntity extends Equatable {
   final int id;

@@ -1,21 +1,17 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/errors/app_exception.dart';
-import '../../../../core/network/api_endpoints.dart';
-import '../../../../core/network/dio_client.dart';
 import '../../../../core/storage/hive_constants.dart';
 import '../../../../core/storage/hive_storage.dart';
 import '../models/user_model.dart';
 
 @injectable
 class AuthRemoteDatasource {
-  final DioClient _dioClient;
   final HiveStorage _hiveStorage;
 
-  const AuthRemoteDatasource(this._dioClient, this._hiveStorage);
+  const AuthRemoteDatasource(this._hiveStorage);
 
   UserModel? getCachedUser() {
     return _hiveStorage.read<UserModel>(HiveBoxes.auth, HiveKeys.currentUser);
@@ -41,23 +37,17 @@ class AuthRemoteDatasource {
 
     await _hiveStorage.write<String>(HiveBoxes.auth, HiveKeys.token, fakeToken);
 
-    try {
-      final response = await _dioClient.dio.get(ApiEndpoints.currentUser);
-      final user = UserModel.fromJson(response.data as Map<String, dynamic>);
-      final userWithEmail = UserModel(
-        id: user.id,
-        name: user.name,
-        email: email,
-        username: user.username,
-        phone: user.phone,
-        website: user.website,
-      );
-      await _hiveStorage.write<UserModel>(
-          HiveBoxes.auth, HiveKeys.currentUser, userWithEmail);
-      return userWithEmail;
-    } on DioException catch (e) {
-      throw e.appException;
-    }
+    final user = UserModel(
+      id: 1,
+      name: email.split('@').first,
+      email: email,
+      username: email.split('@').first,
+      phone: '1-770-736-8031',
+      website: 'hildegard.org',
+    );
+    await _hiveStorage.write<UserModel>(
+        HiveBoxes.auth, HiveKeys.currentUser, user);
+    return user;
   }
 
   Future<void> logout() async {
@@ -83,30 +73,23 @@ class AuthRemoteDatasource {
           'Password must be at least 6 characters.');
     }
 
-    try {
-      final response = await _dioClient.dio.get(ApiEndpoints.currentUser);
-      final baseUser =
-          UserModel.fromJson(response.data as Map<String, dynamic>);
-      final newUser = UserModel(
-        id: baseUser.id,
-        name: name,
-        email: email,
-        username: email.split('@').first,
-        phone: baseUser.phone,
-        website: baseUser.website,
-      );
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final base64Email = base64Url.encode(utf8.encode(email));
+    final fakeToken = 'fake_jwt_${timestamp}_$base64Email';
+    await _hiveStorage.write<String>(
+        HiveBoxes.auth, HiveKeys.token, fakeToken);
 
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final base64Email = base64Url.encode(utf8.encode(email));
-      final fakeToken = 'fake_jwt_${timestamp}_$base64Email';
-      await _hiveStorage.write<String>(
-          HiveBoxes.auth, HiveKeys.token, fakeToken);
-      await _hiveStorage.write<UserModel>(
-          HiveBoxes.auth, HiveKeys.currentUser, newUser);
+    final newUser = UserModel(
+      id: 1,
+      name: name,
+      email: email,
+      username: email.split('@').first,
+      phone: '1-770-736-8031',
+      website: 'hildegard.org',
+    );
 
-      return newUser;
-    } on DioException catch (e) {
-      throw e.appException;
-    }
+    await _hiveStorage.write<UserModel>(
+        HiveBoxes.auth, HiveKeys.currentUser, newUser);
+    return newUser;
   }
 }

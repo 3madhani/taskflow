@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 import '../../domain/entities/task_entity.dart';
 
 part 'task_model.g.dart';
@@ -30,12 +31,47 @@ class TaskModel extends HiveObject {
     required this.priority,
   });
 
+  factory TaskModel.fromEntity(TaskEntity entity) {
+    String statusStr;
+    switch (entity.status) {
+      case TaskStatus.inProgress:
+        statusStr = 'in_progress';
+        break;
+      case TaskStatus.done:
+        statusStr = 'done';
+        break;
+      default:
+        statusStr = 'pending';
+    }
+
+    String priorityStr;
+    switch (entity.priority) {
+      case TaskPriority.medium:
+        priorityStr = 'medium';
+        break;
+      case TaskPriority.high:
+        priorityStr = 'high';
+        break;
+      default:
+        priorityStr = 'low';
+    }
+
+    return TaskModel(
+      id: entity.id,
+      title: entity.title,
+      projectId: entity.projectId,
+      status: statusStr,
+      priority: priorityStr,
+    );
+  }
+
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     final id = json['id'] as int;
     final albumId = json['albumId'] as int? ?? 0;
     final title = json['title'] as String? ?? '';
 
-    final statusStr = id % 3 == 0 ? 'pending' : (id % 3 == 1 ? 'in_progress' : 'done');
+    final statusStr =
+        id % 3 == 0 ? 'pending' : (id % 3 == 1 ? 'in_progress' : 'done');
     final priorityStr = id % 3 == 0 ? 'low' : (id % 3 == 1 ? 'medium' : 'high');
 
     return TaskModel(
@@ -46,8 +82,6 @@ class TaskModel extends HiveObject {
       priority: priorityStr,
     );
   }
-
-  Map<String, dynamic> toJson() => _$TaskModelToJson(this);
 
   TaskEntity toEntity() {
     TaskStatus entityStatus;
@@ -83,37 +117,5 @@ class TaskModel extends HiveObject {
     );
   }
 
-  factory TaskModel.fromEntity(TaskEntity entity) {
-    String statusStr;
-    switch (entity.status) {
-      case TaskStatus.inProgress:
-        statusStr = 'in_progress';
-        break;
-      case TaskStatus.done:
-        statusStr = 'done';
-        break;
-      default:
-        statusStr = 'pending';
-    }
-
-    String priorityStr;
-    switch (entity.priority) {
-      case TaskPriority.medium:
-        priorityStr = 'medium';
-        break;
-      case TaskPriority.high:
-        priorityStr = 'high';
-        break;
-      default:
-        priorityStr = 'low';
-    }
-
-    return TaskModel(
-      id: entity.id,
-      title: entity.title,
-      projectId: entity.projectId,
-      status: statusStr,
-      priority: priorityStr,
-    );
-  }
+  Map<String, dynamic> toJson() => _$TaskModelToJson(this);
 }

@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
+import '../../../../core/enums/app_enums.dart';
 
-enum TaskStatus { pending, inProgress, done }
+export '../../../../core/enums/app_enums.dart' show TaskStatus, TaskPriority;
 
-enum TaskPriority { low, medium, high }
 
 class TaskEntity extends Equatable {
   final int id;

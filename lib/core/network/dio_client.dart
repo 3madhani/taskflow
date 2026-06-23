@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
+
 import '../errors/app_exception.dart';
 import '../storage/hive_constants.dart';
 import '../storage/hive_storage.dart';
@@ -14,9 +17,9 @@ class DioClient {
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiEndpoints.baseUrl,
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-        sendTimeout: const Duration(seconds: 30),
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+        sendTimeout: const Duration(seconds: 10),
         headers: {'Content-Type': 'application/json'},
       ),
     );
@@ -46,26 +49,6 @@ class _AuthInterceptor extends Interceptor {
   }
 }
 
-class _LogInterceptor extends Interceptor {
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    debugPrint('[DioClient] → ${options.method} ${options.uri}');
-    handler.next(options);
-  }
-
-  @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    debugPrint('[DioClient] ← ${response.statusCode} ${response.requestOptions.uri}');
-    handler.next(response);
-  }
-
-  @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    debugPrint('[DioClient] ✗ ${err.type} ${err.requestOptions.uri}: ${err.message}');
-    handler.next(err);
-  }
-}
-
 class _ErrorInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
@@ -87,15 +70,24 @@ class _ErrorInterceptor extends Interceptor {
       case DioExceptionType.badResponse:
         final statusCode = err.response?.statusCode ?? 0;
         if (statusCode == 401) {
-          appException = const UnauthorizedException('Unauthorized. Please login again.');
+          appException =
+              const UnauthorizedException('Unauthorized. Please login again.');
         } else if (statusCode >= 500) {
-          appException = ServerException('Server error ($statusCode). Please try later.');
+          appException =
+              ServerException('Server error ($statusCode). Please try later.');
         } else {
           appException = ServerException('Request failed ($statusCode).');
         }
         break;
       default:
-        appException = ServerException(err.message ?? 'An unexpected error occurred.');
+        if (err.error is IOException) {
+          appException = const NetworkException(
+            'No internet connection or network error. Please check your connection.',
+          );
+        } else {
+          appException =
+              ServerException(err.message ?? 'An unexpected error occurred.');
+        }
     }
 
     handler.reject(
@@ -105,6 +97,28 @@ class _ErrorInterceptor extends Interceptor {
         message: appException.message,
       ),
     );
+  }
+}
+
+class _LogInterceptor extends Interceptor {
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    debugPrint(
+        '[DioClient] ✗ ${err.type} ${err.requestOptions.uri}: ${err.message}');
+    handler.next(err);
+  }
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    debugPrint('[DioClient] → ${options.method} ${options.uri}');
+    handler.next(options);
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    debugPrint(
+        '[DioClient] ← ${response.statusCode} ${response.requestOptions.uri}');
+    handler.next(response);
   }
 }
 

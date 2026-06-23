@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
+import '../enums/app_enums.dart';
 import '../responsive/responsive_value.dart';
 
 class AppButton extends StatelessWidget {
@@ -83,5 +84,3 @@ class AppButton extends StatelessWidget {
     );
   }
 }
-
-enum AppButtonVariant { primary, outlined }
