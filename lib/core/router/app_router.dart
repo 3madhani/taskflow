@@ -75,7 +75,15 @@ GoRouter createRouter(HiveStorage hiveStorage) {
                 state.pathParameters['projectId'] ?? '',
               ) ??
               0;
-          final project = state.extra as ProjectEntity?;
+          final extraMap = state.extra as Map<String, dynamic>?;
+          final project = extraMap != null
+              ? ProjectEntity(
+                  id: extraMap['id'] as int,
+                  title: extraMap['title'] as String,
+                  description: extraMap['description'] as String,
+                  status: ProjectStatus.values[extraMap['statusIndex'] as int],
+                )
+              : null;
           return _slideFromRightPage(
             state,
             ProjectDetailScreen(projectId: projectId, project: project),

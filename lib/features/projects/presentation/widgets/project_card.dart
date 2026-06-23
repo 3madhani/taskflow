@@ -50,7 +50,15 @@ class ProjectCard extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => context.push('/projects/${project.id}', extra: project),
+        onTap: () => context.push(
+          '/projects/${project.id}',
+          extra: {
+            'id': project.id,
+            'title': project.title,
+            'description': project.description,
+            'statusIndex': project.status.index,
+          },
+        ),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Row(
