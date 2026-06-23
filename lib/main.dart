@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
 import 'app.dart';
 import 'core/di/injection.dart';
 import 'core/storage/hive_constants.dart';
@@ -20,8 +21,8 @@ void main() async {
 
   await Future.wait([
     Hive.openBox(HiveBoxes.auth),
-    Hive.openBox<ProjectModel>(HiveBoxes.projects),
-    Hive.openBox<TaskModel>(HiveBoxes.tasks),
+    Hive.openBox(HiveBoxes.projects),
+    Hive.openBox(HiveBoxes.tasks),
     Hive.openBox(HiveBoxes.settings),
   ]);
 
