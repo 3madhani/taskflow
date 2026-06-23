@@ -17,12 +17,10 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   @override
   Future<Either<Failure, List<ProjectEntity>>> getProjects() async {
     try {
-      // Network-first strategy
       final remoteProjects = await _remoteDatasource.getProjects();
       await _localDatasource.cacheProjects(remoteProjects);
       return Right(remoteProjects.map((m) => m.toEntity()).toList());
     } on NetworkException {
-      // Fallback to cache
       try {
         final cachedProjects = _localDatasource.getCachedProjects();
         if (cachedProjects.isEmpty) {

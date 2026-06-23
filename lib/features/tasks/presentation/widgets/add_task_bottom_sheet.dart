@@ -75,7 +75,6 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Handle bar
               Center(
                 child: Container(
                   width: 40,

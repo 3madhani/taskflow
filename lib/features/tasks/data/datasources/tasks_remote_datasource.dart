@@ -33,9 +33,7 @@ class TasksRemoteDatasource {
         ApiEndpoints.photoById(taskId),
         data: {'status': newStatus},
       );
-      // JSONPlaceholder returns the patched object; rebuild with our status
       final data = response.data as Map<String, dynamic>;
-      // Since JSONPlaceholder doesn't persist, we update the status in our mapping
       data['status'] = newStatus;
       return TaskModel.fromJson(data);
     } on DioException catch (e) {
@@ -60,7 +58,6 @@ class TasksRemoteDatasource {
         },
       );
       final data = response.data as Map<String, dynamic>;
-      // JSONPlaceholder returns id=101 for all new posts
       return TaskModel(
         id: data['id'] as int? ?? DateTime.now().millisecondsSinceEpoch,
         title: title,

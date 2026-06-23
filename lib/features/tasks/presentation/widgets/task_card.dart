@@ -89,7 +89,6 @@ class TaskCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Checkbox / Loading indicator
             SizedBox(
               width: 40,
               height: 40,
@@ -108,7 +107,6 @@ class TaskCard extends StatelessWidget {
                     ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            // Task title
             Expanded(
               child: Text(
                 task.title,
@@ -122,7 +120,6 @@ class TaskCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            // Status + Priority badges
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [

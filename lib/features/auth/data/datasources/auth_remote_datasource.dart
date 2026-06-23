@@ -21,12 +21,10 @@ class AuthRemoteDatasource {
     return _hiveStorage.read<UserModel>(HiveBoxes.auth, HiveKeys.currentUser);
   }
 
-  /// Simulates login: validates input, generates fake JWT, fetches user from JSONPlaceholder
   Future<UserModel> login({
     required String email,
     required String password,
   }) async {
-    // Validate email format
     final emailRegex =
         RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
     if (!emailRegex.hasMatch(email)) {
@@ -37,19 +35,15 @@ class AuthRemoteDatasource {
           'Password must be at least 6 characters.');
     }
 
-    // Generate fake JWT
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final base64Email = base64Url.encode(utf8.encode(email));
     final fakeToken = 'fake_jwt_${timestamp}_$base64Email';
 
-    // Store token
     await _hiveStorage.write<String>(HiveBoxes.auth, HiveKeys.token, fakeToken);
 
-    // Fetch user from JSONPlaceholder
     try {
       final response = await _dioClient.dio.get(ApiEndpoints.currentUser);
       final user = UserModel.fromJson(response.data as Map<String, dynamic>);
-      // Override with actual email used to login
       final userWithEmail = UserModel(
         id: user.id,
         name: user.name,
@@ -71,13 +65,11 @@ class AuthRemoteDatasource {
     await _hiveStorage.delete(HiveBoxes.auth, HiveKeys.currentUser);
   }
 
-  /// Simulates register: validates input, stores user locally
   Future<UserModel> register({
     required String name,
     required String email,
     required String password,
   }) async {
-    // Validate
     if (name.trim().length < 2) {
       throw const ValidationException('Name must be at least 2 characters.');
     }
@@ -91,7 +83,6 @@ class AuthRemoteDatasource {
           'Password must be at least 6 characters.');
     }
 
-    // Fetch base user from JSONPlaceholder, override with registration data
     try {
       final response = await _dioClient.dio.get(ApiEndpoints.currentUser);
       final baseUser =
@@ -105,7 +96,6 @@ class AuthRemoteDatasource {
         website: baseUser.website,
       );
 
-      // Generate and store token
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final base64Email = base64Url.encode(utf8.encode(email));
       final fakeToken = 'fake_jwt_${timestamp}_$base64Email';

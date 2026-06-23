@@ -12,15 +12,12 @@ import 'features/tasks/data/models/task_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Hive
   await Hive.initFlutter();
 
-  // Register type adapters
   Hive.registerAdapter(UserModelAdapter());
   Hive.registerAdapter(ProjectModelAdapter());
   Hive.registerAdapter(TaskModelAdapter());
 
-  // Open all boxes upfront
   await Future.wait([
     Hive.openBox(HiveBoxes.auth),
     Hive.openBox<ProjectModel>(HiveBoxes.projects),
@@ -28,10 +25,8 @@ void main() async {
     Hive.openBox(HiveBoxes.settings),
   ]);
 
-  // Configure GetIt dependency injection
   configureDependencies();
 
-  // Load persisted theme before running the app
   getIt<ThemeBloc>().add(const LoadTheme());
 
   runApp(const App());

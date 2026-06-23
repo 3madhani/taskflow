@@ -1,11 +1,9 @@
 class AppStrings {
   AppStrings._();
 
-  // App
   static const String appName = 'TaskFlow';
   static const String appTagline = 'Manage your projects with clarity';
 
-  // Auth
   static const String login = 'Login';
   static const String register = 'Register';
   static const String logout = 'Logout';
@@ -27,14 +25,12 @@ class AppStrings {
   static const String cancel = 'Cancel';
   static const String confirm = 'Confirm';
 
-  // Validation
   static const String fieldRequired = 'This field is required';
   static const String invalidEmail = 'Enter a valid email address';
   static const String passwordTooShort = 'Password must be at least 6 characters';
   static const String passwordsDoNotMatch = 'Passwords do not match';
   static const String nameTooShort = 'Name must be at least 2 characters';
 
-  // Projects
   static const String projects = 'Projects';
   static const String noProjectsTitle = 'No Projects Yet';
   static const String noProjectsSubtitle =
@@ -42,7 +38,6 @@ class AppStrings {
   static const String retry = 'Try Again';
   static const String pullToRefresh = 'Pull to refresh';
 
-  // Tasks
   static const String tasks = 'Tasks';
   static const String addTask = 'Add Task';
   static const String taskTitle = 'Task Title';
@@ -57,13 +52,11 @@ class AppStrings {
   static const String priorityMedium = 'Medium';
   static const String priorityHigh = 'High';
 
-  // Profile
   static const String profile = 'Profile';
   static const String darkMode = 'Dark Mode';
   static const String themeSettings = 'Theme Settings';
   static const String accountInfo = 'Account Info';
 
-  // General
   static const String error = 'Something went wrong';
   static const String noInternet = 'No internet connection. Showing cached data.';
   static const String noCachedData =
@@ -73,7 +66,6 @@ class AppStrings {
   static const String ok = 'OK';
   static const String managedBy = 'Managed by user #';
 
-  // Status labels
   static const String statusActive = 'Active';
   static const String statusOnHold = 'On Hold';
   static const String statusCompleted = 'Completed';

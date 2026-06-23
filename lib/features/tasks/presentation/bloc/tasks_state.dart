@@ -37,7 +37,6 @@ class TasksError extends TasksState {
   List<Object?> get props => [message];
 }
 
-/// Optimistic update state — shows spinner on specific task card
 class TaskUpdating extends TasksState {
   final List<TaskEntity> tasks;
   final int updatingTaskId;

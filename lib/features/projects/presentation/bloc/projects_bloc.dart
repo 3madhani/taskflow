@@ -29,7 +29,6 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
     RefreshProjects event,
     Emitter<ProjectsState> emit,
   ) async {
-    // Don't show loading on pull-to-refresh — keep current list visible
     final result = await _getProjectsUseCase();
     result.fold(
       (failure) => emit(ProjectsError(failure.message)),

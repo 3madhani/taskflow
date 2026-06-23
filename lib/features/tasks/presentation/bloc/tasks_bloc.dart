@@ -39,14 +39,12 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
     final currentTasks = _currentTasks();
     if (currentTasks == null) return;
 
-    // Optimistic update
     final optimisticTasks = currentTasks.map((t) {
       if (t.id == event.taskId) return t.copyWith(status: event.newStatus);
       return t;
     }).toList();
     emit(TaskUpdating(tasks: optimisticTasks, updatingTaskId: event.taskId));
 
-    // API call
     final result = await _updateTaskStatusUseCase(
       taskId: event.taskId,
       newStatus: event.newStatus,
@@ -54,7 +52,6 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
 
     result.fold(
       (failure) {
-        // Revert on failure
         emit(TasksError(failure.message));
       },
       (updatedTask) {
@@ -85,7 +82,6 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
     );
   }
 
-  /// Helper to extract current tasks list from state
   List<TaskEntity>? _currentTasks() {
     final s = state;
     return switch (s) {
@@ -96,7 +92,6 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
     };
   }
 
-  /// Cycle task status: pending → in_progress → done → pending
   static TaskStatus cycleStatus(TaskStatus current) {
     return switch (current) {
       TaskStatus.pending => TaskStatus.inProgress,

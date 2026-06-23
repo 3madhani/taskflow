@@ -17,10 +17,10 @@ class TaskModel extends HiveObject {
   final int projectId;
 
   @HiveField(3)
-  final String status; // 'pending' | 'in_progress' | 'done'
+  final String status;
 
   @HiveField(4)
-  final String priority; // 'low' | 'medium' | 'high'
+  final String priority;
 
   TaskModel({
     required this.id,

@@ -17,7 +17,7 @@ class ProjectModel extends HiveObject {
   final String description;
 
   @HiveField(3)
-  final String status; // 'active' | 'on_hold' | 'completed'
+  final String status;
 
   ProjectModel({
     required this.id,

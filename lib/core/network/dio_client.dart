@@ -108,7 +108,6 @@ class _ErrorInterceptor extends Interceptor {
   }
 }
 
-// Extension to extract AppException from DioException
 extension DioExceptionExt on DioException {
   AppException get appException {
     if (error is AppException) return error as AppException;

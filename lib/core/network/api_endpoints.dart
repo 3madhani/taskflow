@@ -1,12 +1,9 @@
 class ApiEndpoints {
   static const String baseUrl = 'https://jsonplaceholder.typicode.com';
 
-  // Albums (mapped to Projects)
   static const String albums = '/albums';
 
-  // Photos (mapped to Tasks)
   static const String photos = '/photos';
-  // Users
   static const String users = '/users';
 
   static const String currentUser = '/users/1';

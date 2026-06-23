@@ -1,9 +1,3 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
-// **************************************************************************
-// InjectableConfigGenerator
-// **************************************************************************
-
 // ignore_for_file: type=lint
 // coverage:ignore-file
 
@@ -58,7 +52,6 @@ import 'package:taskflow/features/tasks/presentation/bloc/tasks_bloc.dart'
     as _i61;
 
 extension GetItInjectableX on _i174.GetIt {
-// initializes the registration of main-scope dependencies inside of GetIt
   _i174.GetIt init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
