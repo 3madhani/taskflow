@@ -48,12 +48,7 @@ class LoginScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const AuthHeader(
-                          icon: Icons.task_alt_rounded,
                           subtitle: 'Welcome back! Login to continue.',
-                          gradientColors: [
-                            AppColors.primary,
-                            AppColors.secondary
-                          ],
                         ),
                         const SizedBox(height: AppSpacing.xxxl),
                         LoginForm(isLoading: isLoading),

@@ -48,12 +48,7 @@ class RegisterScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const AuthHeader(
-                          icon: Icons.person_add_rounded,
                           subtitle: 'Create your account to get started.',
-                          gradientColors: [
-                            AppColors.secondary,
-                            AppColors.primary
-                          ],
                         ),
                         const SizedBox(height: AppSpacing.xxxl),
                         RegisterForm(isLoading: isLoading),
