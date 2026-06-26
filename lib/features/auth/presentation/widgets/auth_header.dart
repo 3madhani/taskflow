@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 
 const _taskFlowIconPath = 'assets/icons/taskflow_icon.png';
-const _taskFlowIconSize = 112.0;
 const _taskFlowIconRadius = 28.0;
+const _taskFlowIconSize = 112.0;
 
 class AuthHeader extends StatelessWidget {
   final String subtitle;
@@ -31,7 +32,7 @@ class AuthHeader extends StatelessWidget {
               ),
             ],
           ),
-          clipBehavior: Clip.antiAlias,
+          clipBehavior: Clip.none,
           child: Image.asset(
             _taskFlowIconPath,
             fit: BoxFit.cover,

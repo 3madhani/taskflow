@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/app_colors.dart';
+
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/app_text_styles.dart';
@@ -11,7 +11,6 @@ import '../bloc/projects_bloc.dart';
 import '../bloc/projects_event.dart';
 import '../bloc/projects_state.dart';
 import '../widgets/dismissible_project_card.dart';
-import '../widgets/create_project_bottom_sheet.dart';
 
 class ProjectsScreen extends StatefulWidget {
   const ProjectsScreen({super.key});
@@ -22,37 +21,8 @@ class ProjectsScreen extends StatefulWidget {
 
 class _ProjectsScreenState extends State<ProjectsScreen> {
   @override
-  void initState() {
-    super.initState();
-    context.read<ProjectsBloc>().add(const LoadProjects());
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final projectsBloc = context.read<ProjectsBloc>();
-          final result = await showModalBottomSheet<Map<String, dynamic>>(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (_) => const CreateProjectBottomSheet(),
-          );
-          if (result != null) {
-            projectsBloc.add(
-              CreateProject(
-                name: result['name'] as String,
-                description: result['description'] as String,
-                status: result['status'] as String,
-                priority: result['priority'] as String,
-              ),
-            );
-          }
-        },
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add_rounded, color: Colors.white),
-      ),
       body: RefreshIndicator(
         onRefresh: () async {
           context.read<ProjectsBloc>().add(const RefreshProjects());
@@ -119,6 +89,12 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ProjectsBloc>().add(const LoadProjects());
   }
 
   Widget _buildProjectList(BuildContext context, projectsList) {

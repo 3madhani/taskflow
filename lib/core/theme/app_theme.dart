@@ -27,8 +27,9 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       navigationBarTheme: const NavigationBarThemeData(
-        backgroundColor: AppColors.surfaceLight,
+        backgroundColor: Colors.transparent,
         indicatorColor: Color(0x1E3D5AFE),
+        elevation: 0,
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.backgroundLight,
@@ -61,8 +62,9 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       navigationBarTheme: const NavigationBarThemeData(
-        backgroundColor: AppColors.surfaceDark,
+        backgroundColor: Colors.transparent,
         indicatorColor: Color(0x283D5AFE),
+        elevation: 0,
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.backgroundDark,
