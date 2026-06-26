@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import '../../domain/entities/task_entity.dart';
 import '../../domain/usecases/create_task_usecase.dart';
 import '../../domain/usecases/get_tasks_usecase.dart';
+import '../../domain/usecases/update_task_usecase.dart';
 import '../../domain/usecases/update_task_status_usecase.dart';
 import '../../domain/usecases/delete_task_usecase.dart';
 import 'tasks_event.dart';
@@ -12,17 +13,20 @@ import 'tasks_state.dart';
 class TasksBloc extends Bloc<TasksEvent, TasksState> {
   final GetTasksUseCase _getTasksUseCase;
   final UpdateTaskStatusUseCase _updateTaskStatusUseCase;
+  final UpdateTaskUseCase _updateTaskUseCase;
   final CreateTaskUseCase _createTaskUseCase;
   final DeleteTaskUseCase _deleteTaskUseCase;
 
   TasksBloc(
     this._getTasksUseCase,
     this._updateTaskStatusUseCase,
+    this._updateTaskUseCase,
     this._createTaskUseCase,
     this._deleteTaskUseCase,
   ) : super(const TasksInitial()) {
     on<LoadTasks>(_onLoadTasks);
     on<UpdateTaskStatus>(_onUpdateTaskStatus);
+    on<UpdateTask>(_onUpdateTask);
     on<AddTask>(_onAddTask);
     on<DeleteTask>(_onDeleteTask);
   }
@@ -63,6 +67,49 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
           if (t.id == updatedTask.id) return updatedTask;
           return t;
         }).toList();
+        emit(TaskUpdated(updatedTasks));
+      },
+    );
+  }
+
+  Future<void> _onUpdateTask(
+    UpdateTask event,
+    Emitter<TasksState> emit,
+  ) async {
+    final currentTasks = _currentTasks();
+    if (currentTasks == null) return;
+
+    final optimisticTasks = currentTasks.map((task) {
+      if (task.id != event.taskId) {
+        return task;
+      }
+
+      return task.copyWith(
+        title: event.title,
+        description: event.description,
+        status: event.status,
+        priority: event.priority,
+      );
+    }).toList();
+    emit(TaskUpdating(tasks: optimisticTasks, updatingTaskId: event.taskId));
+
+    final result = await _updateTaskUseCase(
+      taskId: event.taskId,
+      title: event.title,
+      description: event.description,
+      status: event.status,
+      priority: event.priority,
+    );
+
+    result.fold(
+      (failure) => emit(TasksError(failure.message)),
+      (updatedTask) {
+        final updatedTasks = optimisticTasks.map((task) {
+          if (task.id == updatedTask.id) {
+            return updatedTask;
+          }
+          return task;
+        }).toList();
         emit(TasksLoaded(updatedTasks));
       },
     );
@@ -74,6 +121,7 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
     final result = await _createTaskUseCase(
       title: event.title,
       projectId: event.projectId,
+      status: event.status,
       priority: event.priority,
       description: event.description,
     );
@@ -110,6 +158,7 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
       TasksLoaded(:final tasks) => tasks,
       TaskUpdating(:final tasks) => tasks,
       TaskAdded(:final tasks) => tasks,
+      TaskUpdated(:final tasks) => tasks,
       _ => null,
     };
   }

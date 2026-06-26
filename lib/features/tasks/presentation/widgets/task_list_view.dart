@@ -7,11 +7,17 @@ class TaskListView extends StatelessWidget {
   final List<TaskEntity> tasks;
   final String? updatingTaskId;
   final double horizontalPadding;
+  final ValueChanged<TaskEntity> onDeleteTask;
+  final ValueChanged<TaskEntity> onEditTask;
+  final void Function(TaskEntity task, TaskStatus status) onStatusChanged;
 
   const TaskListView({
     required this.tasks,
     required this.updatingTaskId,
     required this.horizontalPadding,
+    required this.onDeleteTask,
+    required this.onEditTask,
+    required this.onStatusChanged,
     super.key,
   });
 
@@ -29,6 +35,9 @@ class TaskListView extends StatelessWidget {
         return TaskListItem(
           task: task,
           isUpdating: updatingTaskId == task.id,
+          onDelete: () => onDeleteTask(task),
+          onEdit: () => onEditTask(task),
+          onStatusChanged: (status) => onStatusChanged(task, status),
         );
       },
     );

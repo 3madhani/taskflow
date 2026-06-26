@@ -59,6 +59,8 @@ import 'package:taskflow/features/tasks/domain/usecases/get_tasks_usecase.dart'
     as _i437;
 import 'package:taskflow/features/tasks/domain/usecases/update_task_status_usecase.dart'
     as _i435;
+import 'package:taskflow/features/tasks/domain/usecases/update_task_usecase.dart'
+    as _i999;
 import 'package:taskflow/features/tasks/presentation/bloc/tasks_bloc.dart'
     as _i61;
 
@@ -99,6 +101,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i437.GetTasksUseCase(gh<_i541.TasksRepository>()));
     gh.factory<_i435.UpdateTaskStatusUseCase>(
         () => _i435.UpdateTaskStatusUseCase(gh<_i541.TasksRepository>()));
+    gh.factory<_i999.UpdateTaskUseCase>(
+        () => _i999.UpdateTaskUseCase(gh<_i541.TasksRepository>()));
     gh.factory<_i198.ProjectsRepository>(() => _i750.ProjectsRepositoryImpl(
           gh<_i981.ProjectsRemoteDatasource>(),
           gh<_i849.ProjectsLocalDatasource>(),
@@ -118,6 +122,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i61.TasksBloc>(() => _i61.TasksBloc(
           gh<_i437.GetTasksUseCase>(),
           gh<_i435.UpdateTaskStatusUseCase>(),
+          gh<_i999.UpdateTaskUseCase>(),
           gh<_i91.CreateTaskUseCase>(),
           gh<_i120.DeleteTaskUseCase>(),
         ));

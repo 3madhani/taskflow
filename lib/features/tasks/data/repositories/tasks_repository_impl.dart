@@ -69,6 +69,75 @@ class TasksRepositoryImpl implements TasksRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, TaskEntity>> updateTask({
+    required String taskId,
+    required String title,
+    required TaskStatus status,
+    required TaskPriority priority,
+    String? description,
+  }) async {
+    try {
+      final updatedModel = await _remoteDatasource.updateTask(
+        taskId: taskId,
+        title: title,
+        description: description,
+        status: _statusToString(status),
+        priority: priority.name,
+      );
+      await _localDatasource.saveTask(updatedModel);
+      return Right(updatedModel.toEntity());
+    } on AuthException catch (e) {
+      return Left(UnauthorizedFailure(e.message));
+    } on PostgrestException catch (e) {
+      return _tryLocalTaskUpdate(
+        taskId: taskId,
+        title: title,
+        description: description,
+        status: status,
+        priority: priority,
+        errorMessage: e.message,
+      );
+    } catch (e) {
+      return _tryLocalTaskUpdate(
+        taskId: taskId,
+        title: title,
+        description: description,
+        status: status,
+        priority: priority,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  Future<Either<Failure, TaskEntity>> _tryLocalTaskUpdate({
+    required String taskId,
+    required String title,
+    required TaskStatus status,
+    required TaskPriority priority,
+    required String errorMessage,
+    String? description,
+  }) async {
+    try {
+      final allTasks =
+          _localDatasource.hiveStorage.readAll<TaskModel>(HiveBoxes.tasks);
+      final task = allTasks.firstWhere((t) => t.id == taskId);
+      final updated = TaskModel(
+        id: task.id,
+        title: title,
+        projectId: task.projectId,
+        description: description,
+        status: _statusToString(status),
+        priority: priority.name,
+        createdAt: task.createdAt,
+      );
+      await _localDatasource.saveTask(updated);
+      return Right(updated.toEntity());
+    } catch (e) {
+      return Left(ServerFailure(errorMessage));
+    }
+  }
+
   Future<Either<Failure, TaskEntity>> _tryLocalUpdate(
       String taskId, TaskStatus newStatus, String errorMessage) async {
     try {
@@ -95,6 +164,7 @@ class TasksRepositoryImpl implements TasksRepository {
   Future<Either<Failure, TaskEntity>> createTask({
     required String title,
     required String projectId,
+    required TaskStatus status,
     required TaskPriority priority,
     String? description,
   }) async {
@@ -104,6 +174,7 @@ class TasksRepositoryImpl implements TasksRepository {
         projectId: projectId,
         title: title,
         description: description,
+        status: _statusToString(status),
         priority: priorityStr,
       );
       await _localDatasource.saveTask(newTask);
@@ -112,16 +183,17 @@ class TasksRepositoryImpl implements TasksRepository {
       return Left(UnauthorizedFailure(e.message));
     } on PostgrestException catch (e) {
       return _tryLocalCreate(
-          title, projectId, priority, description, e.message);
+          title, projectId, status, priority, description, e.message);
     } catch (e) {
       return _tryLocalCreate(
-          title, projectId, priority, description, e.toString());
+          title, projectId, status, priority, description, e.toString());
     }
   }
 
   Future<Either<Failure, TaskEntity>> _tryLocalCreate(
     String title,
     String projectId,
+    TaskStatus status,
     TaskPriority priority,
     String? description,
     String errorMessage,
@@ -133,7 +205,7 @@ class TasksRepositoryImpl implements TasksRepository {
         projectId: projectId,
         title: title,
         description: description,
-        status: 'pending',
+        status: _statusToString(status),
         priority: priority.name,
         createdAt: DateTime.now().toIso8601String(),
       );

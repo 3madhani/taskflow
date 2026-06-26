@@ -18,46 +18,87 @@ class ProjectInfoPanel extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ProjectCardMedia(
-            imageUrl: project.imageUrl,
-            height: 190,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Text(project.name, style: AppTextStyles.headingM()),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            project.description?.trim().isNotEmpty == true
-                ? project.description!.trim()
-                : 'No description',
-            style: AppTextStyles.bodyM(color: Colors.grey),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              _InfoChip(
-                label: _statusLabel(),
-                color: statusColor,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ProjectCardMedia(
+              imageUrl: project.imageUrl,
+              height: 190,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text(project.name, style: AppTextStyles.headingM()),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              project.description?.trim().isNotEmpty == true
+                  ? project.description!.trim()
+                  : 'No description',
+              style: AppTextStyles.bodyM(color: Colors.grey),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                _InfoChip(
+                  label: _statusLabel(),
+                  color: statusColor,
+                ),
+                _InfoChip(
+                  label: _priorityLabel(),
+                  color: priorityColor,
+                ),
+                _InfoChip(
+                  label: project.totalTasks > 0
+                      ? '${project.totalTasks} tasks'
+                      : 'No tasks',
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                  filled: false,
+                ),
+              ],
+            ),
+            if (project.totalTasks > 0) ...[
+              const SizedBox(height: AppSpacing.lg),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Project progress',
+                      style: AppTextStyles.label(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withAlpha(180),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${(project.progress * 100).round()}%',
+                    style: AppTextStyles.label(color: AppColors.primary),
+                  ),
+                ],
               ),
-              _InfoChip(
-                label: _priorityLabel(),
-                color: priorityColor,
-              ),
-              _InfoChip(
-                label: project.totalTasks > 0
-                    ? '${project.totalTasks} tasks'
-                    : 'No tasks',
-                color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
-                filled: false,
+              const SizedBox(height: AppSpacing.sm),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: LinearProgressIndicator(
+                  value: project.progress,
+                  minHeight: 6,
+                  backgroundColor:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.borderDark
+                          : AppColors.borderLight,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    project.progress == 1.0
+                        ? AppColors.success
+                        : AppColors.primary,
+                  ),
+                ),
               ),
             ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

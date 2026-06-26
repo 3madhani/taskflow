@@ -24,21 +24,42 @@ class UpdateTaskStatus extends TasksEvent {
   List<Object?> get props => [taskId, newStatus];
 }
 
+class UpdateTask extends TasksEvent {
+  final String taskId;
+  final String title;
+  final String? description;
+  final TaskStatus status;
+  final TaskPriority priority;
+
+  const UpdateTask({
+    required this.taskId,
+    required this.title,
+    required this.status,
+    required this.priority,
+    this.description,
+  });
+
+  @override
+  List<Object?> get props => [taskId, title, description, status, priority];
+}
+
 class AddTask extends TasksEvent {
   final String title;
   final String projectId;
+  final TaskStatus status;
   final TaskPriority priority;
   final String? description;
 
   const AddTask({
     required this.title,
     required this.projectId,
+    required this.status,
     required this.priority,
     this.description,
   });
 
   @override
-  List<Object?> get props => [title, projectId, priority, description];
+  List<Object?> get props => [title, projectId, status, priority, description];
 }
 
 class DeleteTask extends TasksEvent {

@@ -55,3 +55,12 @@ class TaskAdded extends TasksState {
   @override
   List<Object?> get props => [tasks];
 }
+
+class TaskUpdated extends TasksState {
+  final List<TaskEntity> tasks;
+
+  const TaskUpdated(this.tasks);
+
+  @override
+  List<Object?> get props => [tasks];
+}

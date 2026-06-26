@@ -22,6 +22,7 @@ class TasksRemoteDatasource {
     required String projectId,
     required String title,
     String? description,
+    required String status,
     required String priority,
   }) async {
     final response = await _db
@@ -30,7 +31,7 @@ class TasksRemoteDatasource {
           'project_id': projectId,
           'title': title,
           'description': description,
-          'status': 'pending',
+          'status': status,
           'priority': priority,
         })
         .select()
@@ -45,6 +46,27 @@ class TasksRemoteDatasource {
     final response = await _db
         .from('tasks')
         .update({'status': status})
+        .eq('id', taskId)
+        .select()
+        .single();
+    return TaskModel.fromJson(response);
+  }
+
+  Future<TaskModel> updateTask({
+    required String taskId,
+    required String title,
+    required String status,
+    required String priority,
+    String? description,
+  }) async {
+    final response = await _db
+        .from('tasks')
+        .update({
+          'title': title,
+          'description': description,
+          'status': status,
+          'priority': priority,
+        })
         .eq('id', taskId)
         .select()
         .single();

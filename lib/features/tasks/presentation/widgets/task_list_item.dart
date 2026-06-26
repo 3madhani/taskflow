@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/destructive_swipe_background.dart';
 import '../../domain/entities/task_entity.dart';
-import '../bloc/tasks_bloc.dart';
-import '../bloc/tasks_event.dart';
 import 'task_card.dart';
 
 class TaskListItem extends StatelessWidget {
   final TaskEntity task;
   final bool isUpdating;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
+  final ValueChanged<TaskStatus> onStatusChanged;
 
   const TaskListItem({
     required this.task,
     required this.isUpdating,
+    required this.onDelete,
+    required this.onEdit,
+    required this.onStatusChanged,
     super.key,
   });
 
@@ -25,21 +27,14 @@ class TaskListItem extends StatelessWidget {
       direction: DismissDirection.endToStart,
       background: const DestructiveSwipeBackground(
         label: 'Delete task',
-        borderRadius: 14,
+        borderRadius: 18,
       ),
-      onDismissed: (_) {
-        context.read<TasksBloc>().add(
-              DeleteTask(taskId: task.id, projectId: task.projectId),
-            );
-        AppSnackBar.show(
-          context,
-          message: 'Task "${task.title}" deleted',
-          type: AppSnackBarType.info,
-        );
-      },
+      onDismissed: (_) => onDelete(),
       child: TaskCard(
         task: task,
         isUpdating: isUpdating,
+        onEdit: onEdit,
+        onStatusChanged: onStatusChanged,
       ),
     );
   }

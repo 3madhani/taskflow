@@ -1,28 +1,29 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+
 import '../../../../core/errors/failure.dart';
 import '../entities/task_entity.dart';
 import '../repositories/tasks_repository.dart';
 
 @injectable
-class CreateTaskUseCase {
+class UpdateTaskUseCase {
   final TasksRepository _repository;
 
-  const CreateTaskUseCase(this._repository);
+  const UpdateTaskUseCase(this._repository);
 
   Future<Either<Failure, TaskEntity>> call({
+    required String taskId,
     required String title,
-    required String projectId,
     required TaskStatus status,
     required TaskPriority priority,
     String? description,
   }) {
-    return _repository.createTask(
+    return _repository.updateTask(
+      taskId: taskId,
       title: title,
-      projectId: projectId,
+      description: description,
       status: status,
       priority: priority,
-      description: description,
     );
   }
 }

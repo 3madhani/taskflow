@@ -10,9 +10,18 @@ abstract class TasksRepository {
     required TaskStatus newStatus,
   });
 
+  Future<Either<Failure, TaskEntity>> updateTask({
+    required String taskId,
+    required String title,
+    required TaskStatus status,
+    required TaskPriority priority,
+    String? description,
+  });
+
   Future<Either<Failure, TaskEntity>> createTask({
     required String title,
     required String projectId,
+    required TaskStatus status,
     required TaskPriority priority,
     String? description,
   });

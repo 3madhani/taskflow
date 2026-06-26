@@ -3,6 +3,8 @@ import '../../../../core/enums/app_enums.dart';
 
 export '../../../../core/enums/app_enums.dart' show TaskStatus, TaskPriority;
 
+const _unset = Object();
+
 class TaskEntity extends Equatable {
   final String id;
   final String projectId;
@@ -26,7 +28,7 @@ class TaskEntity extends Equatable {
     String? id,
     String? projectId,
     String? title,
-    String? description,
+    Object? description = _unset,
     TaskStatus? status,
     TaskPriority? priority,
     DateTime? createdAt,
@@ -35,7 +37,9 @@ class TaskEntity extends Equatable {
       id: id ?? this.id,
       projectId: projectId ?? this.projectId,
       title: title ?? this.title,
-      description: description ?? this.description,
+      description: identical(description, _unset)
+          ? this.description
+          : description as String?,
       status: status ?? this.status,
       priority: priority ?? this.priority,
       createdAt: createdAt ?? this.createdAt,
