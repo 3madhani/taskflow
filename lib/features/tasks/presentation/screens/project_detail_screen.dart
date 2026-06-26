@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/responsive/responsive_layout.dart';
 import '../../../../core/responsive/screen_utils.dart';
@@ -13,7 +12,8 @@ import '../bloc/tasks_bloc.dart';
 import '../bloc/tasks_event.dart';
 import '../bloc/tasks_state.dart';
 import '../widgets/add_task_bottom_sheet.dart';
-import '../widgets/task_card.dart';
+import '../widgets/project_info_panel.dart';
+import '../widgets/task_list_view.dart';
 import '../../domain/entities/task_entity.dart';
 
 class ProjectDetailScreen extends StatefulWidget {

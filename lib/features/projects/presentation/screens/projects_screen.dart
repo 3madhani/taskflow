@@ -10,7 +10,7 @@ import '../../../../core/widgets/empty_state_widget.dart';
 import '../bloc/projects_bloc.dart';
 import '../bloc/projects_event.dart';
 import '../bloc/projects_state.dart';
-import '../widgets/project_card.dart';
+import '../widgets/dismissible_project_card.dart';
 import '../widgets/create_project_bottom_sheet.dart';
 
 class ProjectsScreen extends StatefulWidget {
@@ -32,21 +32,22 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          final projectsBloc = context.read<ProjectsBloc>();
           final result = await showModalBottomSheet<Map<String, dynamic>>(
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             builder: (_) => const CreateProjectBottomSheet(),
           );
-          if (result != null && mounted) {
-            context.read<ProjectsBloc>().add(
-                  CreateProject(
-                    name: result['name'] as String,
-                    description: result['description'] as String,
-                    status: result['status'] as String,
-                    priority: result['priority'] as String,
-                  ),
-                );
+          if (result != null) {
+            projectsBloc.add(
+              CreateProject(
+                name: result['name'] as String,
+                description: result['description'] as String,
+                status: result['status'] as String,
+                priority: result['priority'] as String,
+              ),
+            );
           }
         },
         backgroundColor: AppColors.primary,
@@ -129,26 +130,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
         itemCount: projectsList.length,
         itemBuilder: (_, i) {
           final project = projectsList[i];
-          return Dismissible(
-            key: Key(project.id),
-            direction: DismissDirection.endToStart,
-            background: Container(
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: AppSpacing.lg),
-              decoration: BoxDecoration(
-                color: AppColors.error,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(Icons.delete_rounded, color: Colors.white),
-            ),
-            onDismissed: (_) {
-              context.read<ProjectsBloc>().add(DeleteProject(project.id));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Project "${project.name}" deleted')),
-              );
-            },
-            child: ProjectCard(project: project),
-          );
+          return DismissibleProjectCard(project: project);
         },
       );
     }
@@ -157,26 +139,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (_, i) {
         final project = projectsList[i];
-        return Dismissible(
-          key: Key(project.id),
-          direction: DismissDirection.endToStart,
-          background: Container(
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsets.only(right: AppSpacing.lg),
-            decoration: BoxDecoration(
-              color: AppColors.error,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Icon(Icons.delete_rounded, color: Colors.white),
-          ),
-          onDismissed: (_) {
-            context.read<ProjectsBloc>().add(DeleteProject(project.id));
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Project "${project.name}" deleted')),
-            );
-          },
-          child: ProjectCard(project: project),
-        );
+        return DismissibleProjectCard(project: project);
       },
     );
   }

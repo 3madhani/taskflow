@@ -39,7 +39,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     try {
       final cached = _localDatasource.getCachedProjects();
       if (cached.isEmpty) {
-        return Left(CacheFailure(
+        return const Left(CacheFailure(
             'No internet connection and no cached data available.'));
       }
       return Right(cached.map((m) => m.toEntity()).toList());

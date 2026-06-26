@@ -10,9 +10,8 @@ import '../../../../core/responsive/screen_utils.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
-import '../bloc/theme_bloc.dart';
-import '../bloc/theme_event.dart';
-import '../bloc/theme_state.dart';
+import '../widgets/profile_header.dart';
+import '../widgets/theme_section.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 
@@ -64,9 +63,9 @@ class ProfileScreen extends StatelessWidget {
                     }
                     return Column(
                       children: [
-                        _buildProfileHeader(context, name, email),
+                        ProfileHeader(name: name, email: email),
                         const SizedBox(height: AppSpacing.xl),
-                        _buildThemeSection(context),
+                        const ThemeSection(),
                         const SizedBox(height: AppSpacing.lg),
                         _buildLogoutButton(context),
                       ],
@@ -97,101 +96,6 @@ class ProfileScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileHeader(
-      BuildContext context, String? name, String? email) {
-    final displayName = name ?? 'User';
-    final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? AppColors.borderDark
-              : AppColors.borderLight,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 32,
-              backgroundColor: AppColors.primary,
-              child: Text(
-                initial,
-                style: AppTextStyles.headingM(color: Colors.white),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.lg),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(displayName, style: AppTextStyles.headingS()),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    email ?? 'No email',
-                    style: AppTextStyles.bodyM(color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildThemeSection(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? AppColors.borderDark
-              : AppColors.borderLight,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.sm,
-        ),
-        child: BlocBuilder<ThemeBloc, ThemeState>(
-          builder: (context, themeState) {
-            final isDark = themeState.themeMode == ThemeMode.dark;
-            return SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              secondary: Container(
-                padding: const EdgeInsets.all(AppSpacing.sm),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withAlpha(20),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-                  color: AppColors.primary,
-                ),
-              ),
-              title: Text(AppStrings.darkMode, style: AppTextStyles.bodyL()),
-              subtitle: Text(
-                isDark ? 'Dark theme active' : 'Light theme active',
-                style: AppTextStyles.bodyM(color: Colors.grey),
-              ),
-              value: isDark,
-              activeThumbColor: AppColors.primary,
-              onChanged: (_) =>
-                  context.read<ThemeBloc>().add(const ToggleTheme()),
-            );
-          },
         ),
       ),
     );

@@ -83,7 +83,7 @@ class _CreateProjectBottomSheetState extends State<CreateProjectBottomSheet> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 DropdownButtonFormField<String>(
-                  value: _selectedStatus,
+                  initialValue: _selectedStatus,
                   decoration: InputDecoration(
                     labelText: 'Status',
                     filled: true,
@@ -109,7 +109,7 @@ class _CreateProjectBottomSheetState extends State<CreateProjectBottomSheet> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 DropdownButtonFormField<String>(
-                  value: _selectedPriority,
+                  initialValue: _selectedPriority,
                   decoration: InputDecoration(
                     labelText: 'Priority',
                     filled: true,

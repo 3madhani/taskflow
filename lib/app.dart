@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import 'core/constants/app_colors.dart';
 import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
@@ -11,6 +9,8 @@ import 'features/profile/presentation/bloc/theme_bloc.dart';
 import 'features/profile/presentation/bloc/theme_state.dart';
 import 'features/projects/presentation/bloc/projects_bloc.dart';
 import 'features/tasks/presentation/bloc/tasks_bloc.dart';
+
+import 'core/theme/app_theme.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -55,8 +55,8 @@ class _AppState extends State<App> {
             title: 'TaskFlow',
             debugShowCheckedModeBanner: false,
             themeMode: themeState.themeMode,
-            theme: _lightTheme(),
-            darkTheme: _darkTheme(),
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
             routerConfig: _routerWrapper.router,
           );
         },
@@ -74,73 +74,5 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     _routerWrapper = GoRouterWrapper();
-  }
-
-  ThemeData _darkTheme() {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        brightness: Brightness.dark,
-        surface: AppColors.surfaceDark,
-      ).copyWith(
-        primary: AppColors.primary,
-        secondary: AppColors.secondary,
-        error: AppColors.error,
-        surface: AppColors.surfaceDark,
-      ),
-      scaffoldBackgroundColor: AppColors.backgroundDark,
-      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
-      cardTheme: CardThemeData(
-        color: AppColors.surfaceDark,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-      navigationBarTheme: const NavigationBarThemeData(
-        backgroundColor: AppColors.surfaceDark,
-        indicatorColor: Color(0x283D5AFE),
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.backgroundDark,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-    );
-  }
-
-  ThemeData _lightTheme() {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        brightness: Brightness.light,
-        surface: AppColors.surfaceLight,
-      ).copyWith(
-        primary: AppColors.primary,
-        secondary: AppColors.secondary,
-        error: AppColors.error,
-        surface: AppColors.surfaceLight,
-      ),
-      scaffoldBackgroundColor: AppColors.backgroundLight,
-      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
-      cardTheme: CardThemeData(
-        color: AppColors.surfaceLight,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-      navigationBarTheme: const NavigationBarThemeData(
-        backgroundColor: AppColors.surfaceLight,
-        indicatorColor: Color(0x1E3D5AFE),
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.backgroundLight,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-    );
   }
 }

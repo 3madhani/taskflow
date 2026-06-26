@@ -33,7 +33,7 @@ class TasksRemoteDatasource {
       'status': 'pending',
       'priority': priority,
     }).select().single();
-    return TaskModel.fromJson(response as Map<String, dynamic>);
+    return TaskModel.fromJson(response);
   }
 
   /// PATCH — update task status (cycle: pending → in_progress → done)
@@ -47,7 +47,7 @@ class TasksRemoteDatasource {
         .eq('id', taskId)
         .select()
         .single();
-    return TaskModel.fromJson(response as Map<String, dynamic>);
+    return TaskModel.fromJson(response);
   }
 
   /// DELETE — remove a task

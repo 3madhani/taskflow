@@ -123,7 +123,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   ),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<TaskPriority>(
-                    value: _selectedPriority,
+                    initialValue: _selectedPriority,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Theme.of(context).colorScheme.surface,

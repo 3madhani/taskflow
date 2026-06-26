@@ -37,7 +37,7 @@ class ProjectsRemoteDatasource {
       'status': status,
       'priority': priority,
     }).select('*, tasks(*)').single();
-    return ProjectModel.fromJson(response as Map<String, dynamic>);
+    return ProjectModel.fromJson(response);
   }
 
   /// DELETE — cascade deletes tasks via FK.

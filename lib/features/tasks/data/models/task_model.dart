@@ -1,12 +1,10 @@
 import 'package:hive/hive.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 import '../../domain/entities/task_entity.dart';
 
 part 'task_model.g.dart';
 
 @HiveType(typeId: 2)
-@JsonSerializable()
 class TaskModel extends HiveObject {
   @HiveField(0)
   final String id;
@@ -99,5 +97,13 @@ class TaskModel extends HiveObject {
     );
   }
 
-  Map<String, dynamic> toJson() => _$TaskModelToJson(this);
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'project_id': projectId,
+        'title': title,
+        'description': description,
+        'status': status,
+        'priority': priority,
+        'created_at': createdAt,
+      };
 }

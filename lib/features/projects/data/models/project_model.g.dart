@@ -57,33 +57,3 @@ class ProjectModelAdapter extends TypeAdapter<ProjectModel> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
-
-ProjectModel _$ProjectModelFromJson(Map<String, dynamic> json) => ProjectModel(
-      id: json['id'] as String,
-      userId: json['userId'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String?,
-      status: json['status'] as String,
-      priority: json['priority'] as String,
-      createdAt: json['createdAt'] as String,
-      tasks: (json['tasks'] as List<dynamic>?)
-              ?.map((e) => e as Map<String, dynamic>)
-              .toList() ??
-          [],
-    );
-
-Map<String, dynamic> _$ProjectModelToJson(ProjectModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'userId': instance.userId,
-      'name': instance.name,
-      'description': instance.description,
-      'status': instance.status,
-      'priority': instance.priority,
-      'createdAt': instance.createdAt,
-      'tasks': instance.tasks,
-    };

@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../core/errors/app_exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/hive_constants.dart';
 import '../../domain/entities/task_entity.dart';
@@ -38,7 +37,7 @@ class TasksRepositoryImpl implements TasksRepository {
     try {
       final cached = _localDatasource.getCachedTasks(projectId);
       if (cached.isEmpty) {
-        return Left(CacheFailure(
+        return const Left(CacheFailure(
             'No internet connection and no cached data available.'));
       }
       return Right(cached.map((m) => m.toEntity()).toList());

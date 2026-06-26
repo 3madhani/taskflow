@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 import '../../domain/entities/project_entity.dart';
 
@@ -7,7 +6,6 @@ part 'project_model.g.dart';
 
 // Hive typeId: 1 — never reuse this typeId
 @HiveType(typeId: 1)
-@JsonSerializable()
 class ProjectModel extends HiveObject {
   @HiveField(0)
   final String id;
@@ -60,7 +58,15 @@ class ProjectModel extends HiveObject {
     );
   }
 
-  Map<String, dynamic> toJson() => _$ProjectModelToJson(this);
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'user_id': userId,
+        'name': name,
+        'description': description,
+        'status': status,
+        'priority': priority,
+        'created_at': createdAt,
+      };
 
   ProjectEntity toEntity() {
     ProjectStatus entityStatus;
