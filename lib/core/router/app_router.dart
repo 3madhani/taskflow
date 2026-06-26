@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
-import '../../features/auth/presentation/screens/login_screen.dart';
-import '../../features/auth/presentation/screens/register_screen.dart';
+import '../../features/auth/presentation/screens/auth_screen.dart';
+import '../../features/auth/presentation/widgets/auth_form_mode.dart';
 import '../../features/projects/domain/entities/project_entity.dart';
 import '../../features/projects/presentation/screens/projects_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
@@ -33,14 +33,14 @@ GoRouter createRouter() {
         path: '/login',
         pageBuilder: (context, state) => _slideFromBottomPage(
           state,
-          const LoginScreen(),
+          const AuthScreen(),
         ),
       ),
       GoRoute(
         path: '/register',
         pageBuilder: (context, state) => _slideFromBottomPage(
           state,
-          const RegisterScreen(),
+          const AuthScreen(initialMode: AuthFormMode.register),
         ),
       ),
       StatefulShellRoute.indexedStack(

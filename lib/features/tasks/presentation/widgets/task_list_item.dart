@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/destructive_swipe_background.dart';
 import '../../domain/entities/task_entity.dart';
 import '../bloc/tasks_bloc.dart';
@@ -30,8 +31,10 @@ class TaskListItem extends StatelessWidget {
         context.read<TasksBloc>().add(
               DeleteTask(taskId: task.id, projectId: task.projectId),
             );
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Task "${task.title}" deleted')),
+        AppSnackBar.show(
+          context,
+          message: 'Task "${task.title}" deleted',
+          type: AppSnackBarType.info,
         );
       },
       child: TaskCard(

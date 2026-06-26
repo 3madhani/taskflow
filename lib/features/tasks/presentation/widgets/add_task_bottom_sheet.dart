@@ -5,6 +5,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/widgets/app_bottom_sheet.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../domain/entities/task_entity.dart';
 import '../bloc/tasks_bloc.dart';
@@ -55,12 +56,10 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
         if (state is TaskAdded) {
           Navigator.of(context).pop();
         } else if (state is TasksError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
+          AppSnackBar.show(
+            context,
+            message: state.message,
+            type: AppSnackBarType.error,
           );
         }
       },

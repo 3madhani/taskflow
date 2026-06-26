@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
 import 'project_card_media.dart';
 
 class ProjectImagePickerField extends StatefulWidget {
@@ -124,11 +125,10 @@ class _ProjectImagePickerFieldState extends State<ProjectImagePickerField> {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_errorMessageFor(error)),
-          behavior: SnackBarBehavior.floating,
-        ),
+      AppSnackBar.show(
+        context,
+        message: _errorMessageFor(error),
+        type: AppSnackBarType.error,
       );
     } finally {
       if (mounted) {

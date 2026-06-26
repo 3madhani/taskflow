@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/destructive_swipe_background.dart';
 import '../../domain/entities/project_entity.dart';
 import '../bloc/projects_bloc.dart';
@@ -25,11 +26,10 @@ class DismissibleProjectCard extends StatelessWidget {
       ),
       onDismissed: (_) {
         context.read<ProjectsBloc>().add(DeleteProject(project.id));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Project "${project.name}" deleted'),
-            behavior: SnackBarBehavior.floating,
-          ),
+        AppSnackBar.show(
+          context,
+          message: 'Project "${project.name}" deleted',
+          type: AppSnackBarType.info,
         );
       },
       child: ProjectCard(project: project),
