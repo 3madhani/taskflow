@@ -1,119 +1,141 @@
-# TaskFlow 🗂️
+# TaskFlow
 
-![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)
-![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart&logoColor=white)
-![BLoC](https://img.shields.io/badge/State-BLoC-8B00FF?logo=bloc&logoColor=white)
-![Supabase](https://img.shields.io/badge/Backend-Supabase-3ECF8E?logo=supabase&logoColor=white)
-![Hive](https://img.shields.io/badge/Storage-Hive-FF7043?logo=hive&logoColor=white)
+TaskFlow is a Flutter task manager app for organizing projects and tasks. It supports user authentication, project creation, task tracking, priorities, statuses, local caching, and light/dark theme preferences.
 
-> **TaskFlow** is a production-quality Task Manager app for iOS and Android, built with **Clean Architecture**, **BLoC state management**, **Supabase backend**, **Hive offline caching**, and **GoRouter navigation**.
+## Submission
 
----
+- Public GitHub Repository: https://github.com/3madhani/taskflow
+- APK: build the split APK files with the command in the APK section below.
+- Screenshots: included in this README from `assets/app_screenshot/`.
 
-## 🏗️ Tech Stack
+## App Icon And Splash
 
-| Package | Version | Purpose |
-|---|---|---|
-| `flutter_bloc` | ^8.1.5 | BLoC state management |
-| `bloc` | ^8.1.4 | Core BLoC library |
-| `equatable` | ^2.0.5 | Value equality for states/events |
-| `go_router` | ^13.2.1 | Declarative navigation with guards |
-| `supabase_flutter` | ^2.3.0 | Real backend Auth, REST API (PostgREST), and JWT management |
-| `hive` + `hive_flutter` | ^2.2.3 | Offline-first local caching + theme preferences |
-| `get_it` + `injectable` | ^7.7.0 / ^2.4.2 | Dependency injection |
-| `google_fonts` | ^6.2.1 | Inter typography |
-| `dartz` | ^0.10.1 | Functional `Either<Failure, T>` |
-| `freezed_annotation` | ^2.4.1 | Code generation for sealed classes |
-| `json_annotation` | ^4.9.0 | JSON serialization |
+| App Icon | Splash Icon |
+|---|---|
+| <img src="assets/icons/taskflow_icon.png" width="140" alt="TaskFlow app icon"> | <img src="assets/icons/taskflow_splash.png" width="180" alt="TaskFlow splash icon"> |
 
----
+## Screenshots
 
-## 🚀 Getting Started
+| | |
+|---|---|
+| <img src="assets/app_screenshot/Screenshot%202026-06-26%20180430.png" width="240" alt="TaskFlow screenshot 1"> | <img src="assets/app_screenshot/Screenshot%202026-06-26%20180523.png" width="240" alt="TaskFlow screenshot 2"> |
+| <img src="assets/app_screenshot/Screenshot%202026-06-26%20180537.png" width="240" alt="TaskFlow screenshot 3"> | <img src="assets/app_screenshot/Screenshot%202026-06-26%20180553.png" width="240" alt="TaskFlow screenshot 4"> |
+| <img src="assets/app_screenshot/Screenshot%202026-06-26%20180641.png" width="240" alt="TaskFlow screenshot 5"> | <img src="assets/app_screenshot/Screenshot%202026-06-26%20180654.png" width="240" alt="TaskFlow screenshot 6"> |
+| <img src="assets/app_screenshot/Screenshot%202026-06-26%20180819.png" width="240" alt="TaskFlow screenshot 7"> | <img src="assets/app_screenshot/Screenshot%202026-06-26%20180849.png" width="240" alt="TaskFlow screenshot 8"> |
+| <img src="assets/app_screenshot/Screenshot%202026-06-26%20180919.png" width="240" alt="TaskFlow screenshot 9"> | <img src="assets/app_screenshot/Screenshot%202026-06-26%20180945.png" width="240" alt="TaskFlow screenshot 10"> |
+
+## Features
+
+- Register, login, and logout with Supabase Auth.
+- Create, update, and delete projects.
+- Add and manage tasks inside projects.
+- Set project and task status and priority.
+- Cache projects, tasks, and settings locally with Hive.
+- Switch between light and dark themes.
+- Pick project images from the device.
+
+## Dependencies
+
+Main packages used in this app:
+
+- `flutter_bloc` and `bloc` for state management.
+- `go_router` for app navigation.
+- `supabase_flutter` for authentication and remote database access.
+- `hive` and `hive_flutter` for local storage.
+- `get_it` and `injectable` for dependency injection.
+- `freezed_annotation`, `json_annotation`, and generated files for models.
+- `google_fonts` for typography.
+- `image_picker` for project image selection.
+- `dartz` for functional result handling.
+- `path` and `path_provider` for file/path support.
+
+Development packages:
+
+- `build_runner`
+- `hive_generator`
+- `injectable_generator`
+- `freezed`
+- `json_serializable`
+- `flutter_lints`
+- `flutter_launcher_icons`
+- `flutter_native_splash`
+
+## How To Run
+
+1. Install dependencies:
 
 ```bash
-# 1. Install dependencies
 flutter pub get
+```
 
-# 2. Generate code (Hive adapters, JSON, Injectable wiring)
+2. Generate required files:
+
+```bash
 dart run build_runner build --delete-conflicting-outputs
+```
 
-# 3. Run the app
+3. Run the app:
+
+```bash
 flutter run
 ```
 
-> ⚠️ **Step 2 is mandatory** before `flutter run`. Without it the app will not compile.
+## APK Build
 
----
+To create smaller APK files for sharing, build split APKs by Android ABI:
 
-## 🧱 Architecture
-
-```
-╔══════════════════════════════════════════╗
-║  PRESENTATION LAYER                      ║
-║  Screen → BlocBuilder/Consumer           ║
-║  BlocProvider → BLoC                     ║
-║  BLoC fires events → emits states        ║
-╠══════════════════════════════════════════╣
-║  DOMAIN LAYER                            ║
-║  BLoC calls UseCase (injected)           ║
-║  UseCase calls Repository (abstract)     ║
-║  Returns Either<Failure, Entity>         ║
-╠══════════════════════════════════════════╣
-║  DATA LAYER                              ║
-║  RepositoryImpl (injected as interface)  ║
-║  → RemoteDatasource (Supabase Client)    ║
-║  → LocalDatasource (Hive)                ║
-║  Maps Model → Entity (toEntity())        ║
-╚══════════════════════════════════════════╝
+```bash
+flutter build apk --release --split-per-abi
 ```
 
----
+The generated files are created in:
 
-## 🗄️ Hive Storage (Offline Caching)
-
-| Box | Key | Value |
-|---|---|---|
-| `projects_box` | `<projectId>` | `ProjectModel` |
-| `tasks_box` | `<projectId>_<taskId>` | `TaskModel` |
-| `settings_box` | `theme_mode` | `'light'` or `'dark'` |
-
-> Note: JWT token and active session storage are automatically managed by `supabase_flutter` via `flutter_secure_storage`. No tokens are stored in Hive.
-
----
-
-## 🌐 Supabase Integration
-
-Using the auto-generated REST API and secure Row Level Security (RLS) policies:
-
-| Feature | Endpoint / SDK Call |
-|---|---|
-| Register | `auth.signUp(email, password, data)` |
-| Login | `auth.signInWithPassword(email, password)` |
-| Logout | `auth.signOut()` |
-| Projects | `.from('projects').select('*, tasks(*)')` |
-| Tasks | `.from('tasks').select()` |
-
----
-
-## 📁 Project Structure
-
+```text
+build/app/outputs/flutter-apk/
 ```
+
+Expected release APK files:
+
+- `app-armeabi-v7a-release.apk`
+- `app-arm64-v8a-release.apk`
+- `app-x86_64-release.apk`
+
+For most modern Android phones, share `app-arm64-v8a-release.apk`.
+
+## CI/CD
+
+This repository includes a GitHub Actions workflow at `.github/workflows/android-build.yml`.
+
+The workflow:
+
+- Installs Flutter and Java.
+- Runs `flutter pub get`.
+- Generates required code with `build_runner`.
+- Builds split release APKs with `flutter build apk --release --split-per-abi`.
+- Uploads the APK files as GitHub Actions artifacts.
+- Attaches APK files to a GitHub Release when a release is created.
+
+APK files should not be committed to the repository because `/build/` is ignored. Download the generated APK files from the GitHub Actions run or from a GitHub Release.
+
+## Project Structure
+
+```text
 lib/
-├── main.dart              # Entry point & SDK init
-├── app.dart               # Root widget + BLoC providers
-├── core/                  # Shared infrastructure
-│   ├── constants/         # Colors, typography, spacing, strings
-│   ├── di/                # GetIt/Injectable setup
-│   ├── errors/            # AppException + Failure sealed classes
-│   ├── network/           # Supabase config
-│   ├── responsive/        # ResponsiveLayout, ScreenUtils
-│   ├── router/            # GoRouter + auth guard
-│   ├── storage/           # Hive storage wrapper
-│   └── widgets/           # Reusable UI components
+├── main.dart          # App startup, Hive, Supabase, and dependency setup
+├── app.dart           # Root widget, router, themes, and BLoC providers
+├── core/              # Shared config, routing, storage, theme, helpers, widgets
 └── features/
-    ├── auth/              # Login, Register (data/domain/presentation)
-    ├── projects/          # Projects (data/domain/presentation)
-    ├── tasks/             # Tasks (data/domain/presentation)
-    ├── profile/           # Profile + ThemeBloc
-    └── shell/             # Bottom nav shell
+    ├── auth/          # Authentication data, domain, and UI
+    ├── projects/      # Project data, domain, and UI
+    ├── tasks/         # Task data, domain, and UI
+    ├── profile/       # Profile screen and theme settings
+    └── shell/         # Main app navigation shell
 ```
+
+## Important Notes
+
+- The app uses Supabase for authentication and remote project/task data.
+- Supabase configuration is stored in `lib/core/network/supabase_config.dart`.
+- Hive is used for local caching through `projects_box`, `tasks_box`, and `settings_box`.
+- Code generation is required after changing models, Hive adapters, or dependency injection files.
+- The current release build is configured with the debug signing config, so it is suitable for direct testing/sharing, not Play Store publishing.
