@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -16,7 +19,8 @@ class ProjectCardMedia extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imageUrl != null && imageUrl!.trim().isNotEmpty;
+    final imageValue = imageUrl?.trim();
+    final hasImage = imageValue != null && imageValue.isNotEmpty;
     final theme = Theme.of(context);
 
     return ClipRRect(
@@ -28,11 +32,7 @@ class ProjectCardMedia extends StatelessWidget {
             ? Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    imageUrl!.trim(),
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _fallback(theme),
-                  ),
+                  _buildImage(imageValue, theme),
                   DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -50,6 +50,47 @@ class ProjectCardMedia extends StatelessWidget {
             : _fallback(theme),
       ),
     );
+  }
+
+  Widget _buildImage(String imageValue, ThemeData theme) {
+    if (_isDataImage(imageValue)) {
+      final bytes = _decodeDataImage(imageValue);
+      if (bytes == null) {
+        return _fallback(theme);
+      }
+
+      return Image.memory(
+        bytes,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _fallback(theme),
+      );
+    }
+
+    final uri = Uri.tryParse(imageValue);
+    final isRemoteImage =
+        uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+    if (!isRemoteImage) {
+      return _fallback(theme);
+    }
+
+    return Image.network(
+      imageValue,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => _fallback(theme),
+    );
+  }
+
+  Uint8List? _decodeDataImage(String imageValue) {
+    final markerIndex = imageValue.indexOf('base64,');
+    if (markerIndex == -1) {
+      return null;
+    }
+
+    try {
+      return base64Decode(imageValue.substring(markerIndex + 7));
+    } on FormatException {
+      return null;
+    }
   }
 
   Widget _fallback(ThemeData theme) {
@@ -83,5 +124,9 @@ class ProjectCardMedia extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool _isDataImage(String imageValue) {
+    return imageValue.startsWith('data:image/');
   }
 }
