@@ -27,6 +27,9 @@ class ProjectModel extends HiveObject {
   @HiveField(6)
   final String createdAt;
 
+  @HiveField(7)
+  final String? imageUrl;
+
   final List<Map<String, dynamic>> tasks;
 
   ProjectModel({
@@ -37,6 +40,7 @@ class ProjectModel extends HiveObject {
     required this.status,
     required this.priority,
     required this.createdAt,
+    this.imageUrl,
     this.tasks = const [],
   });
 
@@ -47,6 +51,7 @@ class ProjectModel extends HiveObject {
       userId: json['user_id'] as String,
       name: json['name'] as String,
       description: json['description'] as String?,
+      imageUrl: json['image_url'] as String? ?? json['imageUrl'] as String?,
       status: json['status'] as String? ?? 'active',
       priority: json['priority'] as String? ?? 'medium',
       createdAt: json['created_at'] as String,
@@ -59,6 +64,7 @@ class ProjectModel extends HiveObject {
         'user_id': userId,
         'name': name,
         'description': description,
+        'image_url': imageUrl,
         'status': status,
         'priority': priority,
         'created_at': createdAt,
@@ -92,7 +98,10 @@ class ProjectModel extends HiveObject {
     final taskSummaries = tasks.map((t) {
       return TaskSummary(
         id: t['id'] as String? ?? '',
+        title: t['title'] as String? ?? 'Untitled task',
+        description: t['description'] as String?,
         status: t['status'] as String? ?? 'pending',
+        priority: t['priority'] as String? ?? 'medium',
       );
     }).toList();
 
@@ -101,6 +110,7 @@ class ProjectModel extends HiveObject {
       userId: userId,
       name: name,
       description: description,
+      imageUrl: imageUrl,
       status: entityStatus,
       priority: entityPriority,
       createdAt: DateTime.parse(createdAt),
@@ -116,5 +126,6 @@ class ProjectModel extends HiveObject {
         status: status,
         priority: priority,
         createdAt: createdAt,
+        imageUrl: imageUrl,
       );
 }

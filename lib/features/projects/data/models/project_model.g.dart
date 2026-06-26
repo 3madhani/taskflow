@@ -24,13 +24,14 @@ class ProjectModelAdapter extends TypeAdapter<ProjectModel> {
       status: fields[4] as String,
       priority: fields[5] as String,
       createdAt: fields[6] as String,
+      imageUrl: fields[7] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ProjectModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,7 +45,9 @@ class ProjectModelAdapter extends TypeAdapter<ProjectModel> {
       ..writeByte(5)
       ..write(obj.priority)
       ..writeByte(6)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(7)
+      ..write(obj.imageUrl);
   }
 
   @override

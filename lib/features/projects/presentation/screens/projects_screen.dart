@@ -7,6 +7,7 @@ import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/responsive/screen_utils.dart';
 import '../../../../core/widgets/app_error_widget.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
+import '../../domain/entities/project_entity.dart';
 import '../bloc/projects_bloc.dart';
 import '../bloc/projects_event.dart';
 import '../bloc/projects_state.dart';
@@ -85,6 +86,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                 },
               ),
             ),
+            const SliverToBoxAdapter(child: SizedBox(height: 80)),
           ],
         ),
       ),
@@ -97,28 +99,21 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
     context.read<ProjectsBloc>().add(const LoadProjects());
   }
 
-  Widget _buildProjectList(BuildContext context, projectsList) {
-    final isTablet = context.isTablet;
-    if (isTablet) {
-      return SliverGrid.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: AppSpacing.lg,
-          crossAxisSpacing: AppSpacing.lg,
-          childAspectRatio: 2.5,
-        ),
-        itemCount: projectsList.length,
-        itemBuilder: (_, i) {
-          final project = projectsList[i];
-          return DismissibleProjectCard(project: project);
-        },
-      );
-    }
+  Widget _buildProjectList(BuildContext context, List<ProjectEntity> projects) {
     return SliverList.separated(
-      itemCount: projectsList.length,
+      itemCount: projects.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (_, i) {
-        final project = projectsList[i];
+        final project = projects[i];
+        if (context.isTablet) {
+          return Align(
+            alignment: Alignment.center,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 760),
+              child: DismissibleProjectCard(project: project),
+            ),
+          );
+        }
         return DismissibleProjectCard(project: project);
       },
     );

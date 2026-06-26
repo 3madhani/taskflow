@@ -21,18 +21,20 @@ class RefreshProjects extends ProjectsEvent {
 class CreateProject extends ProjectsEvent {
   final String name;
   final String? description;
+  final String? imageUrl;
   final String status;
   final String priority;
 
   const CreateProject({
     required this.name,
     this.description,
+    this.imageUrl,
     required this.status,
     required this.priority,
   });
 
   @override
-  List<Object?> get props => [name, description, status, priority];
+  List<Object?> get props => [name, description, imageUrl, status, priority];
 }
 
 class DeleteProject extends ProjectsEvent {

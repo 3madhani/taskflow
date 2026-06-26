@@ -19,6 +19,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   Future<Either<Failure, ProjectEntity>> createProject({
     required String name,
     String? description,
+    String? imageUrl,
     required String status,
     required String priority,
   }) async {
@@ -26,6 +27,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       final model = await _remoteDatasource.createProject(
         name: name,
         description: description,
+        imageUrl: imageUrl,
         status: status,
         priority: priority,
       );

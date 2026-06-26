@@ -54,6 +54,7 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
     final result = await _createProjectUseCase(
       name: event.name,
       description: event.description,
+      imageUrl: event.imageUrl,
       status: event.status,
       priority: event.priority,
     );

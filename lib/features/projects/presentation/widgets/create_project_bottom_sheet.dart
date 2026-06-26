@@ -4,6 +4,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import 'project_image_url_field.dart';
 
 class CreateProjectBottomSheet extends StatefulWidget {
   const CreateProjectBottomSheet({super.key});
@@ -17,6 +18,7 @@ class _CreateProjectBottomSheetState extends State<CreateProjectBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descController = TextEditingController();
+  final _imageUrlController = TextEditingController();
   String _selectedStatus = 'active';
   String _selectedPriority = 'medium';
 
@@ -24,6 +26,7 @@ class _CreateProjectBottomSheetState extends State<CreateProjectBottomSheet> {
   void dispose() {
     _nameController.dispose();
     _descController.dispose();
+    _imageUrlController.dispose();
     super.dispose();
   }
 
@@ -82,6 +85,8 @@ class _CreateProjectBottomSheetState extends State<CreateProjectBottomSheet> {
                   controller: _descController,
                   maxLines: 3,
                 ),
+                const SizedBox(height: AppSpacing.md),
+                ProjectImageUrlField(controller: _imageUrlController),
                 const SizedBox(height: AppSpacing.md),
                 DropdownButtonFormField<String>(
                   initialValue: _selectedStatus,
@@ -142,7 +147,12 @@ class _CreateProjectBottomSheetState extends State<CreateProjectBottomSheet> {
                     if (_formKey.currentState?.validate() ?? false) {
                       Navigator.of(context).pop({
                         'name': _nameController.text.trim(),
-                        'description': _descController.text.trim(),
+                        'description': _descController.text.trim().isEmpty
+                            ? null
+                            : _descController.text.trim(),
+                        'imageUrl': _imageUrlController.text.trim().isEmpty
+                            ? null
+                            : _imageUrlController.text.trim(),
                         'status': _selectedStatus,
                         'priority': _selectedPriority,
                       });

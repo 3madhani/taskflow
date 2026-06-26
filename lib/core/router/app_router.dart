@@ -79,6 +79,7 @@ GoRouter createRouter() {
                   userId: extraMap['userId'] as String? ?? '',
                   name: extraMap['name'] as String,
                   description: extraMap['description'] as String?,
+                  imageUrl: extraMap['imageUrl'] as String?,
                   status: ProjectStatus.values[extraMap['statusIndex'] as int],
                   priority: ProjectPriority
                       .values[extraMap['priorityIndex'] as int? ?? 1],

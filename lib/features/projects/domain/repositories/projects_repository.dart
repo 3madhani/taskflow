@@ -8,6 +8,7 @@ abstract class ProjectsRepository {
   Future<Either<Failure, ProjectEntity>> createProject({
     required String name,
     String? description,
+    String? imageUrl,
     required String status,
     required String priority,
   });

@@ -20,6 +20,7 @@ class ProjectsRemoteDatasource {
   Future<ProjectModel> createProject({
     required String name,
     String? description,
+    String? imageUrl,
     required String status,
     required String priority,
   }) async {
@@ -30,6 +31,7 @@ class ProjectsRemoteDatasource {
           'user_id': userId,
           'name': name,
           'description': description,
+          'image_url': imageUrl,
           'status': status,
           'priority': priority,
         })

@@ -13,12 +13,14 @@ class CreateProjectUseCase {
   Future<Either<Failure, ProjectEntity>> call({
     required String name,
     String? description,
+    String? imageUrl,
     required String status,
     required String priority,
   }) {
     return _repository.createProject(
       name: name,
       description: description,
+      imageUrl: imageUrl,
       status: status,
       priority: priority,
     );
