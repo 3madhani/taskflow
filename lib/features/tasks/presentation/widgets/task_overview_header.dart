@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/helper/task_helper.dart';
 import '../../domain/entities/task_entity.dart';
-import 'task_visuals.dart';
 
 class TaskOverviewHeader extends StatelessWidget {
   final List<TaskEntity> tasks;
@@ -19,9 +19,13 @@ class TaskOverviewHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final done = _count(TaskStatus.done);
+    final taskStatuses = tasks.map((task) => task.status);
+    final done = TaskHelper.statusCount(taskStatuses, TaskStatus.done);
     final total = tasks.length;
-    final progress = total == 0 ? 0.0 : done / total;
+    final progress = TaskHelper.completionProgress(
+      completed: done,
+      total: total,
+    );
 
     return Padding(
       padding: EdgeInsets.fromLTRB(
@@ -86,12 +90,18 @@ class TaskOverviewHeader extends StatelessWidget {
                 children: [
                   _StatusCountChip(
                     label: 'Pending',
-                    value: _count(TaskStatus.pending),
+                    value: TaskHelper.statusCount(
+                      taskStatuses,
+                      TaskStatus.pending,
+                    ),
                     status: TaskStatus.pending,
                   ),
                   _StatusCountChip(
                     label: 'In progress',
-                    value: _count(TaskStatus.inProgress),
+                    value: TaskHelper.statusCount(
+                      taskStatuses,
+                      TaskStatus.inProgress,
+                    ),
                     status: TaskStatus.inProgress,
                   ),
                   _StatusCountChip(
@@ -106,10 +116,6 @@ class TaskOverviewHeader extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  int _count(TaskStatus status) {
-    return tasks.where((task) => task.status == status).length;
   }
 }
 
@@ -126,7 +132,7 @@ class _StatusCountChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = TaskVisuals.statusColor(status);
+    final color = TaskHelper.statusColor(status);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -141,7 +147,7 @@ class _StatusCountChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(TaskVisuals.statusIcon(status), size: 13, color: color),
+          Icon(TaskHelper.statusIcon(status), size: 13, color: color),
           const SizedBox(width: AppSpacing.xs),
           Text(
             '$label $value',

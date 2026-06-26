@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../domain/entities/project_entity.dart';
+
 sealed class ProjectsEvent extends Equatable {
   const ProjectsEvent();
 }
@@ -44,4 +46,19 @@ class DeleteProject extends ProjectsEvent {
 
   @override
   List<Object?> get props => [projectId];
+}
+
+class UpdateProjectMeta extends ProjectsEvent {
+  final String projectId;
+  final ProjectStatus status;
+  final ProjectPriority priority;
+
+  const UpdateProjectMeta({
+    required this.projectId,
+    required this.status,
+    required this.priority,
+  });
+
+  @override
+  List<Object?> get props => [projectId, status, priority];
 }

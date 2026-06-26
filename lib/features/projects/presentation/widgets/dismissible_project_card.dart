@@ -9,9 +9,11 @@ import 'project_card.dart';
 
 class DismissibleProjectCard extends StatelessWidget {
   final ProjectEntity project;
+  final bool isUpdating;
 
   const DismissibleProjectCard({
     required this.project,
+    this.isUpdating = false,
     super.key,
   });
 
@@ -32,7 +34,30 @@ class DismissibleProjectCard extends StatelessWidget {
           type: AppSnackBarType.info,
         );
       },
-      child: ProjectCard(project: project),
+      child: ProjectCard(
+        project: project,
+        isUpdating: isUpdating,
+        onStatusChanged: (status) {
+          if (status == project.status) return;
+          context.read<ProjectsBloc>().add(
+                UpdateProjectMeta(
+                  projectId: project.id,
+                  status: status,
+                  priority: project.priority,
+                ),
+              );
+        },
+        onPriorityChanged: (priority) {
+          if (priority == project.priority) return;
+          context.read<ProjectsBloc>().add(
+                UpdateProjectMeta(
+                  projectId: project.id,
+                  status: project.status,
+                  priority: priority,
+                ),
+              );
+        },
+      ),
     );
   }
 }

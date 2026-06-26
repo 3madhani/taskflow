@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/errors/failure.dart';
+import '../../../../core/helper/task_helper.dart';
 import '../../../../core/storage/hive_constants.dart';
 import '../../domain/entities/task_entity.dart';
 import '../../domain/repositories/tasks_repository.dart';
@@ -53,10 +54,9 @@ class TasksRepositoryImpl implements TasksRepository {
     required TaskStatus newStatus,
   }) async {
     try {
-      final statusStr = _statusToString(newStatus);
       final updatedModel = await _remoteDatasource.updateTaskStatus(
         taskId: taskId,
-        status: statusStr,
+        status: TaskHelper.statusValue(newStatus),
       );
       await _localDatasource.saveTask(updatedModel);
       return Right(updatedModel.toEntity());
@@ -82,8 +82,8 @@ class TasksRepositoryImpl implements TasksRepository {
         taskId: taskId,
         title: title,
         description: description,
-        status: _statusToString(status),
-        priority: priority.name,
+        status: TaskHelper.statusValue(status),
+        priority: TaskHelper.priorityValue(priority),
       );
       await _localDatasource.saveTask(updatedModel);
       return Right(updatedModel.toEntity());
@@ -127,8 +127,8 @@ class TasksRepositoryImpl implements TasksRepository {
         title: title,
         projectId: task.projectId,
         description: description,
-        status: _statusToString(status),
-        priority: priority.name,
+        status: TaskHelper.statusValue(status),
+        priority: TaskHelper.priorityValue(priority),
         createdAt: task.createdAt,
       );
       await _localDatasource.saveTask(updated);
@@ -149,7 +149,7 @@ class TasksRepositoryImpl implements TasksRepository {
         title: task.title,
         projectId: task.projectId,
         description: task.description,
-        status: _statusToString(newStatus),
+        status: TaskHelper.statusValue(newStatus),
         priority: task.priority,
         createdAt: task.createdAt,
       );
@@ -169,13 +169,12 @@ class TasksRepositoryImpl implements TasksRepository {
     String? description,
   }) async {
     try {
-      final priorityStr = priority.name;
       final newTask = await _remoteDatasource.createTask(
         projectId: projectId,
         title: title,
         description: description,
-        status: _statusToString(status),
-        priority: priorityStr,
+        status: TaskHelper.statusValue(status),
+        priority: TaskHelper.priorityValue(priority),
       );
       await _localDatasource.saveTask(newTask);
       return Right(newTask.toEntity());
@@ -205,8 +204,8 @@ class TasksRepositoryImpl implements TasksRepository {
         projectId: projectId,
         title: title,
         description: description,
-        status: _statusToString(status),
-        priority: priority.name,
+        status: TaskHelper.statusValue(status),
+        priority: TaskHelper.priorityValue(priority),
         createdAt: DateTime.now().toIso8601String(),
       );
       await _localDatasource.saveTask(newTask);
@@ -232,17 +231,6 @@ class TasksRepositoryImpl implements TasksRepository {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
-    }
-  }
-
-  String _statusToString(TaskStatus status) {
-    switch (status) {
-      case TaskStatus.inProgress:
-        return 'in_progress';
-      case TaskStatus.done:
-        return 'done';
-      default:
-        return 'pending';
     }
   }
 }

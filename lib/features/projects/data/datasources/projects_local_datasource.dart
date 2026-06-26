@@ -26,4 +26,16 @@ class ProjectsLocalDatasource {
       throw CacheException('Failed to read cached projects: ${e.toString()}');
     }
   }
+
+  Future<void> saveProject(ProjectModel project) async {
+    try {
+      await _hiveStorage.write<ProjectModel>(
+        HiveBoxes.projects,
+        project.id,
+        project,
+      );
+    } catch (e) {
+      throw CacheException('Failed to save project: ${e.toString()}');
+    }
+  }
 }

@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/helper/image_helper.dart';
 
 class ProjectCardMedia extends StatelessWidget {
   final String? imageUrl;
@@ -54,8 +53,8 @@ class ProjectCardMedia extends StatelessWidget {
   }
 
   Widget _buildImage(String imageValue, ThemeData theme) {
-    if (_isDataImage(imageValue)) {
-      final bytes = _decodeDataImage(imageValue);
+    if (ImageHelper.isDataImage(imageValue)) {
+      final bytes = ImageHelper.decodeDataImage(imageValue);
       if (bytes == null) {
         return _fallback(theme);
       }
@@ -94,19 +93,6 @@ class ProjectCardMedia extends StatelessWidget {
     );
   }
 
-  Uint8List? _decodeDataImage(String imageValue) {
-    final markerIndex = imageValue.indexOf('base64,');
-    if (markerIndex == -1) {
-      return null;
-    }
-
-    try {
-      return base64Decode(imageValue.substring(markerIndex + 7));
-    } on FormatException {
-      return null;
-    }
-  }
-
   Widget _fallback(ThemeData theme) {
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -138,9 +124,5 @@ class ProjectCardMedia extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  bool _isDataImage(String imageValue) {
-    return imageValue.startsWith('data:image/');
   }
 }

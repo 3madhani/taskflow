@@ -13,5 +13,11 @@ abstract class ProjectsRepository {
     required String priority,
   });
 
+  Future<Either<Failure, ProjectEntity>> updateProjectMeta({
+    required String projectId,
+    required ProjectStatus status,
+    required ProjectPriority priority,
+  });
+
   Future<Either<Failure, void>> deleteProject(String projectId);
 }

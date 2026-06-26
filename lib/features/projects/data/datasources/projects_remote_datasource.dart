@@ -40,6 +40,23 @@ class ProjectsRemoteDatasource {
     return ProjectModel.fromJson(response);
   }
 
+  Future<ProjectModel> updateProjectMeta({
+    required String projectId,
+    required String status,
+    required String priority,
+  }) async {
+    final response = await _db
+        .from('projects')
+        .update({
+          'status': status,
+          'priority': priority,
+        })
+        .eq('id', projectId)
+        .select('*, tasks(*)')
+        .single();
+    return ProjectModel.fromJson(response);
+  }
+
   Future<void> deleteProject(String projectId) async {
     await _db.from('projects').delete().eq('id', projectId);
   }

@@ -82,6 +82,15 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                       ),
                     ProjectsLoaded(:final projects) =>
                       _buildProjectList(context, projects),
+                    ProjectUpdating(
+                      :final projects,
+                      :final updatingProjectId
+                    ) =>
+                      _buildProjectList(
+                        context,
+                        projects,
+                        updatingProjectId: updatingProjectId,
+                      ),
                   };
                 },
               ),
@@ -99,7 +108,11 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
     context.read<ProjectsBloc>().add(const LoadProjects());
   }
 
-  Widget _buildProjectList(BuildContext context, List<ProjectEntity> projects) {
+  Widget _buildProjectList(
+    BuildContext context,
+    List<ProjectEntity> projects, {
+    String? updatingProjectId,
+  }) {
     return SliverList.separated(
       itemCount: projects.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
@@ -110,11 +123,17 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
             alignment: Alignment.center,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 760),
-              child: DismissibleProjectCard(project: project),
+              child: DismissibleProjectCard(
+                project: project,
+                isUpdating: updatingProjectId == project.id,
+              ),
             ),
           );
         }
-        return DismissibleProjectCard(project: project);
+        return DismissibleProjectCard(
+          project: project,
+          isUpdating: updatingProjectId == project.id,
+        );
       },
     );
   }

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/helper/task_helper.dart';
 import '../../domain/entities/task_entity.dart';
 import 'task_status_selector.dart';
-import 'task_visuals.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskEntity task;
@@ -24,7 +24,7 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final statusColor = TaskVisuals.statusColor(task.status);
+    final statusColor = TaskHelper.statusColor(task.status);
     final isDone = task.status == TaskStatus.done;
 
     return AnimatedContainer(
@@ -88,7 +88,7 @@ class TaskCard extends StatelessWidget {
                     _PriorityPill(priority: task.priority),
                     const Spacer(),
                     Text(
-                      TaskVisuals.statusLabel(task.status),
+                      TaskHelper.statusLabel(task.status),
                       style: AppTextStyles.caption(color: statusColor),
                     ),
                   ],
@@ -164,7 +164,7 @@ class _TaskStatusAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = TaskVisuals.statusColor(status);
+    final color = TaskHelper.statusColor(status);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
@@ -190,7 +190,7 @@ class _TaskStatusAvatar extends StatelessWidget {
               ),
             )
           : Icon(
-              TaskVisuals.statusIcon(status),
+              TaskHelper.statusIcon(status),
               color: Colors.white,
               size: 22,
             ),
@@ -205,7 +205,7 @@ class _PriorityPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = TaskVisuals.priorityColor(priority);
+    final color = TaskHelper.priorityColor(priority);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -220,10 +220,10 @@ class _PriorityPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(TaskVisuals.priorityIcon(priority), size: 13, color: color),
+          Icon(TaskHelper.priorityIcon(priority), size: 13, color: color),
           const SizedBox(width: AppSpacing.xs),
           Text(
-            '${TaskVisuals.priorityLabel(priority)} priority',
+            '${TaskHelper.priorityLabel(priority)} priority',
             style: AppTextStyles.caption(color: color),
           ),
         ],

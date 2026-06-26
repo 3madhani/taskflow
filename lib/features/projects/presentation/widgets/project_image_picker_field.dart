@@ -1,14 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/helper/image_helper.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import 'project_card_media.dart';
 
@@ -111,7 +107,7 @@ class _ProjectImagePickerFieldState extends State<ProjectImagePickerField> {
         return;
       }
 
-      final storedImagePath = await _storeImage(image);
+      final storedImagePath = await ImageHelper.storeProjectImage(image);
       if (!mounted) {
         return;
       }
@@ -127,7 +123,7 @@ class _ProjectImagePickerFieldState extends State<ProjectImagePickerField> {
 
       AppSnackBar.show(
         context,
-        message: _errorMessageFor(error),
+        message: ImageHelper.imagePickerErrorMessage(error),
         type: AppSnackBarType.error,
       );
     } finally {
@@ -135,44 +131,6 @@ class _ProjectImagePickerFieldState extends State<ProjectImagePickerField> {
         setState(() => _isPicking = false);
       }
     }
-  }
-
-  String _errorMessageFor(Object error) {
-    if (error is MissingPluginException) {
-      return 'Image picker is not ready. Restart the app and try again.';
-    }
-    if (error is PlatformException) {
-      return 'Could not choose image: ${error.message ?? error.code}';
-    }
-    return 'Could not choose image';
-  }
-
-  String _extensionFor(XFile image) {
-    final extension = path.extension(image.name).toLowerCase();
-    if (extension == '.jpg' ||
-        extension == '.jpeg' ||
-        extension == '.png' ||
-        extension == '.webp') {
-      return extension;
-    }
-    return '.jpg';
-  }
-
-  Future<String> _storeImage(XFile image) async {
-    final documentsDirectory = await getApplicationDocumentsDirectory();
-    final imagesDirectory = Directory(
-      path.join(documentsDirectory.path, 'project_images'),
-    );
-    if (!await imagesDirectory.exists()) {
-      await imagesDirectory.create(recursive: true);
-    }
-
-    final fileName =
-        'project_${DateTime.now().microsecondsSinceEpoch}${_extensionFor(image)}';
-    final storedImage = File(path.join(imagesDirectory.path, fileName));
-    final bytes = await image.readAsBytes();
-    await storedImage.writeAsBytes(bytes, flush: true);
-    return storedImage.path;
   }
 }
 

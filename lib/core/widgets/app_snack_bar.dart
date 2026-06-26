@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
 import '../constants/app_text_styles.dart';
+import '../helper/app_snack_bar_helper.dart';
 
-enum AppSnackBarType {
-  info,
-  success,
-  error,
-}
+export '../helper/app_snack_bar_helper.dart' show AppSnackBarType;
 
 class AppSnackBar {
   AppSnackBar._();
@@ -50,7 +47,7 @@ class _AppSnackBarContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final accentColor = _accentColor();
+    final accentColor = AppSnackBarHelper.accentColor(type);
     final backgroundColor = theme.brightness == Brightness.dark
         ? AppColors.surfaceDark
         : AppColors.surfaceLight;
@@ -88,7 +85,7 @@ class _AppSnackBarContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
-                _icon(),
+                AppSnackBarHelper.icon(type),
                 color: accentColor,
                 size: 19,
               ),
@@ -106,21 +103,5 @@ class _AppSnackBarContent extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _accentColor() {
-    return switch (type) {
-      AppSnackBarType.info => AppColors.primary,
-      AppSnackBarType.success => AppColors.success,
-      AppSnackBarType.error => AppColors.error,
-    };
-  }
-
-  IconData _icon() {
-    return switch (type) {
-      AppSnackBarType.info => Icons.info_outline_rounded,
-      AppSnackBarType.success => Icons.check_circle_outline_rounded,
-      AppSnackBarType.error => Icons.error_outline_rounded,
-    };
   }
 }

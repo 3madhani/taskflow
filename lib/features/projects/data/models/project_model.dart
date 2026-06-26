@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 
+import '../../../../core/helper/project_helper.dart';
 import '../../domain/entities/project_entity.dart';
 
 part 'project_model.g.dart';
@@ -60,30 +61,6 @@ class ProjectModel extends HiveObject {
   }
 
   ProjectEntity toEntity() {
-    ProjectStatus entityStatus;
-    switch (status) {
-      case 'on_hold':
-        entityStatus = ProjectStatus.onHold;
-        break;
-      case 'completed':
-        entityStatus = ProjectStatus.completed;
-        break;
-      default:
-        entityStatus = ProjectStatus.active;
-    }
-
-    ProjectPriority entityPriority;
-    switch (priority) {
-      case 'low':
-        entityPriority = ProjectPriority.low;
-        break;
-      case 'high':
-        entityPriority = ProjectPriority.high;
-        break;
-      default:
-        entityPriority = ProjectPriority.medium;
-    }
-
     final taskSummaries = tasks.map((t) {
       return TaskSummary(
         id: t['id'] as String? ?? '',
@@ -100,8 +77,8 @@ class ProjectModel extends HiveObject {
       name: name,
       description: description,
       imageUrl: imageUrl,
-      status: entityStatus,
-      priority: entityPriority,
+      status: ProjectHelper.statusFromValue(status),
+      priority: ProjectHelper.priorityFromValue(priority),
       createdAt: DateTime.parse(createdAt),
       tasks: taskSummaries,
     );

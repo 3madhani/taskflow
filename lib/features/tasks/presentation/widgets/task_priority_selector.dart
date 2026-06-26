@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/helper/task_helper.dart';
 import '../../domain/entities/task_entity.dart';
-import 'task_visuals.dart';
 
 class TaskPrioritySelector extends StatelessWidget {
   final TaskPriority selectedPriority;
@@ -50,7 +50,7 @@ class _PriorityOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = TaskVisuals.priorityColor(priority);
+    final color = TaskHelper.priorityColor(priority);
 
     return InkWell(
       onTap: onTap,
@@ -76,13 +76,13 @@ class _PriorityOption extends StatelessWidget {
         child: Column(
           children: [
             Icon(
-              TaskVisuals.priorityIcon(priority),
+              TaskHelper.priorityIcon(priority),
               color: color,
               size: 18,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              TaskVisuals.priorityLabel(priority),
+              TaskHelper.priorityLabel(priority),
               style: AppTextStyles.caption(
                 color: isSelected
                     ? color

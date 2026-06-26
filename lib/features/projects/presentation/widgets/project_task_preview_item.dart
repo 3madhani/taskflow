@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/helper/task_helper.dart';
 import '../../domain/entities/project_entity.dart';
 
 class ProjectTaskPreviewItem extends StatelessWidget {
@@ -15,8 +15,8 @@ class ProjectTaskPreviewItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = _statusColor();
-    final priorityColor = _priorityColor();
+    final statusColor = TaskHelper.statusColorFromValue(task.status);
+    final priorityColor = TaskHelper.priorityColorFromValue(task.priority);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
@@ -60,12 +60,12 @@ class ProjectTaskPreviewItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               _TinyLabel(
-                label: _statusLabel(),
+                label: TaskHelper.statusLabelFromValue(task.status),
                 color: statusColor,
               ),
               const SizedBox(height: 4),
               _TinyLabel(
-                label: _priorityLabel(),
+                label: TaskHelper.priorityLabelFromValue(task.priority),
                 color: priorityColor,
               ),
             ],
@@ -73,38 +73,6 @@ class ProjectTaskPreviewItem extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Color _statusColor() {
-    return switch (task.status) {
-      'done' => AppColors.statusDone,
-      'in_progress' => AppColors.statusInProgress,
-      _ => AppColors.statusPending,
-    };
-  }
-
-  String _statusLabel() {
-    return switch (task.status) {
-      'done' => 'Done',
-      'in_progress' => 'In Progress',
-      _ => 'Pending',
-    };
-  }
-
-  Color _priorityColor() {
-    return switch (task.priority) {
-      'low' => AppColors.priorityLow,
-      'high' => AppColors.priorityHigh,
-      _ => AppColors.priorityMedium,
-    };
-  }
-
-  String _priorityLabel() {
-    return switch (task.priority) {
-      'low' => 'Low',
-      'high' => 'High',
-      _ => 'Medium',
-    };
   }
 }
 

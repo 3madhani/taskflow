@@ -41,6 +41,8 @@ import 'package:taskflow/features/projects/domain/usecases/delete_project_usecas
     as _i94;
 import 'package:taskflow/features/projects/domain/usecases/get_projects_usecase.dart'
     as _i255;
+import 'package:taskflow/features/projects/domain/usecases/update_project_meta_usecase.dart'
+    as _i365;
 import 'package:taskflow/features/projects/presentation/bloc/projects_bloc.dart'
     as _i794;
 import 'package:taskflow/features/tasks/data/datasources/tasks_local_datasource.dart'
@@ -60,7 +62,7 @@ import 'package:taskflow/features/tasks/domain/usecases/get_tasks_usecase.dart'
 import 'package:taskflow/features/tasks/domain/usecases/update_task_status_usecase.dart'
     as _i435;
 import 'package:taskflow/features/tasks/domain/usecases/update_task_usecase.dart'
-    as _i999;
+    as _i519;
 import 'package:taskflow/features/tasks/presentation/bloc/tasks_bloc.dart'
     as _i61;
 
@@ -101,8 +103,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i437.GetTasksUseCase(gh<_i541.TasksRepository>()));
     gh.factory<_i435.UpdateTaskStatusUseCase>(
         () => _i435.UpdateTaskStatusUseCase(gh<_i541.TasksRepository>()));
-    gh.factory<_i999.UpdateTaskUseCase>(
-        () => _i999.UpdateTaskUseCase(gh<_i541.TasksRepository>()));
+    gh.factory<_i519.UpdateTaskUseCase>(
+        () => _i519.UpdateTaskUseCase(gh<_i541.TasksRepository>()));
     gh.factory<_i198.ProjectsRepository>(() => _i750.ProjectsRepositoryImpl(
           gh<_i981.ProjectsRemoteDatasource>(),
           gh<_i849.ProjectsLocalDatasource>(),
@@ -119,10 +121,18 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i94.DeleteProjectUseCase(gh<_i198.ProjectsRepository>()));
     gh.factory<_i255.GetProjectsUseCase>(
         () => _i255.GetProjectsUseCase(gh<_i198.ProjectsRepository>()));
+    gh.factory<_i365.UpdateProjectMetaUseCase>(
+        () => _i365.UpdateProjectMetaUseCase(gh<_i198.ProjectsRepository>()));
+    gh.factory<_i794.ProjectsBloc>(() => _i794.ProjectsBloc(
+          gh<_i255.GetProjectsUseCase>(),
+          gh<_i172.CreateProjectUseCase>(),
+          gh<_i94.DeleteProjectUseCase>(),
+          gh<_i365.UpdateProjectMetaUseCase>(),
+        ));
     gh.factory<_i61.TasksBloc>(() => _i61.TasksBloc(
           gh<_i437.GetTasksUseCase>(),
           gh<_i435.UpdateTaskStatusUseCase>(),
-          gh<_i999.UpdateTaskUseCase>(),
+          gh<_i519.UpdateTaskUseCase>(),
           gh<_i91.CreateTaskUseCase>(),
           gh<_i120.DeleteTaskUseCase>(),
         ));
@@ -131,11 +141,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i437.RegisterUseCase>(),
           gh<_i469.LogoutUseCase>(),
           gh<_i697.AuthRepository>(),
-        ));
-    gh.factory<_i794.ProjectsBloc>(() => _i794.ProjectsBloc(
-          gh<_i255.GetProjectsUseCase>(),
-          gh<_i172.CreateProjectUseCase>(),
-          gh<_i94.DeleteProjectUseCase>(),
         ));
     return this;
   }

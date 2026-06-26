@@ -33,6 +33,30 @@ class ProjectEntity extends Equatable {
 
   double get progress => totalTasks == 0 ? 0.0 : doneTasks / totalTasks;
 
+  ProjectEntity copyWith({
+    String? id,
+    String? userId,
+    String? name,
+    String? description,
+    String? imageUrl,
+    ProjectStatus? status,
+    ProjectPriority? priority,
+    DateTime? createdAt,
+    List<TaskSummary>? tasks,
+  }) {
+    return ProjectEntity(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      imageUrl: imageUrl ?? this.imageUrl,
+      status: status ?? this.status,
+      priority: priority ?? this.priority,
+      createdAt: createdAt ?? this.createdAt,
+      tasks: tasks ?? this.tasks,
+    );
+  }
+
   @override
   List<Object?> get props => [
         id,

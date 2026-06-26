@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/helper/text_helper.dart';
 import '../../../projects/domain/entities/project_entity.dart';
 
 class ProjectDetailAppBar extends StatelessWidget
@@ -45,16 +46,9 @@ class ProjectDetailAppBar extends StatelessWidget
             )
           : null,
       title: Text(
-        project?.name ?? 'Project #${_shortProjectId()}',
+        project?.name ?? 'Project #${TextHelper.shortId(projectId)}',
         style: AppTextStyles.headingS(),
       ),
     );
-  }
-
-  String _shortProjectId() {
-    if (projectId.length <= 8) {
-      return projectId;
-    }
-    return projectId.substring(0, 8);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 
+import '../../../../core/helper/task_helper.dart';
 import '../../domain/entities/task_entity.dart';
 
 part 'task_model.g.dart';
@@ -38,25 +39,13 @@ class TaskModel extends HiveObject {
   });
 
   factory TaskModel.fromEntity(TaskEntity entity) {
-    String statusStr;
-    switch (entity.status) {
-      case TaskStatus.inProgress:
-        statusStr = 'in_progress';
-        break;
-      case TaskStatus.done:
-        statusStr = 'done';
-        break;
-      default:
-        statusStr = 'pending';
-    }
-
     return TaskModel(
       id: entity.id,
       projectId: entity.projectId,
       title: entity.title,
       description: entity.description,
-      status: statusStr,
-      priority: entity.priority.name,
+      status: TaskHelper.statusValue(entity.status),
+      priority: TaskHelper.priorityValue(entity.priority),
       createdAt: entity.createdAt.toIso8601String(),
     );
   }
@@ -74,25 +63,13 @@ class TaskModel extends HiveObject {
   }
 
   TaskEntity toEntity() {
-    TaskStatus entityStatus;
-    switch (status) {
-      case 'in_progress':
-        entityStatus = TaskStatus.inProgress;
-        break;
-      case 'done':
-        entityStatus = TaskStatus.done;
-        break;
-      default:
-        entityStatus = TaskStatus.pending;
-    }
-
     return TaskEntity(
       id: id,
       projectId: projectId,
       title: title,
       description: description,
-      status: entityStatus,
-      priority: TaskPriority.values.byName(priority),
+      status: TaskHelper.statusFromValue(status),
+      priority: TaskHelper.priorityFromValue(priority),
       createdAt: DateTime.parse(createdAt),
     );
   }

@@ -3,63 +3,51 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
-import '../../../../core/helper/task_helper.dart';
-import '../../domain/entities/task_entity.dart';
+import '../../../../core/helper/project_helper.dart';
+import '../../domain/entities/project_entity.dart';
 
-class TaskStatusSelector extends StatelessWidget {
-  final TaskStatus selectedStatus;
-  final ValueChanged<TaskStatus>? onChanged;
-  final bool compact;
+class ProjectStatusSelector extends StatelessWidget {
+  final ProjectStatus selectedStatus;
+  final ValueChanged<ProjectStatus>? onChanged;
 
-  const TaskStatusSelector({
+  const ProjectStatusSelector({
     required this.selectedStatus,
     this.onChanged,
-    this.compact = false,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    const statuses = TaskStatus.values;
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isTight = compact || constraints.maxWidth < 360;
-        return Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: [
-            for (final status in statuses)
-              _TaskStatusOption(
-                status: status,
-                isSelected: selectedStatus == status,
-                isTight: isTight,
-                onTap: onChanged == null ? null : () => onChanged!(status),
-              ),
-          ],
-        );
-      },
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: [
+        for (final status in ProjectStatus.values)
+          _ProjectStatusOption(
+            status: status,
+            isSelected: selectedStatus == status,
+            onTap: onChanged == null ? null : () => onChanged!(status),
+          ),
+      ],
     );
   }
 }
 
-class _TaskStatusOption extends StatelessWidget {
-  final TaskStatus status;
+class _ProjectStatusOption extends StatelessWidget {
+  final ProjectStatus status;
   final bool isSelected;
-  final bool isTight;
   final VoidCallback? onTap;
 
-  const _TaskStatusOption({
+  const _ProjectStatusOption({
     required this.status,
     required this.isSelected,
-    required this.isTight,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = TaskHelper.statusColor(status);
+    final color = ProjectHelper.statusColor(status);
 
     return Material(
       color: Colors.transparent,
@@ -69,8 +57,8 @@ class _TaskStatusOption extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
-          padding: EdgeInsets.symmetric(
-            horizontal: isTight ? AppSpacing.sm : AppSpacing.md,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
             vertical: AppSpacing.sm,
           ),
           decoration: BoxDecoration(
@@ -87,14 +75,10 @@ class _TaskStatusOption extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                TaskHelper.statusIcon(status),
-                size: isTight ? 15 : 17,
-                color: color,
-              ),
+              Icon(ProjectHelper.statusIcon(status), size: 17, color: color),
               const SizedBox(width: AppSpacing.xs),
               Text(
-                TaskHelper.statusLabel(status),
+                ProjectHelper.statusLabel(status),
                 style: AppTextStyles.caption(
                   color: isSelected
                       ? color

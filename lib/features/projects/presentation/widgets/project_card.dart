@@ -4,14 +4,27 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/helper/date_time_helper.dart';
+import '../../../../core/helper/project_helper.dart';
 import '../../domain/entities/project_entity.dart';
 import 'project_card_media.dart';
+import 'project_priority_selector.dart';
+import 'project_status_selector.dart';
 import 'project_task_preview_list.dart';
 
 class ProjectCard extends StatefulWidget {
   final ProjectEntity project;
+  final bool isUpdating;
+  final ValueChanged<ProjectStatus>? onStatusChanged;
+  final ValueChanged<ProjectPriority>? onPriorityChanged;
 
-  const ProjectCard({required this.project, super.key});
+  const ProjectCard({
+    required this.project,
+    this.isUpdating = false,
+    this.onStatusChanged,
+    this.onPriorityChanged,
+    super.key,
+  });
 
   @override
   State<ProjectCard> createState() => _ProjectCardState();
@@ -25,8 +38,8 @@ class _ProjectCardState extends State<ProjectCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final statusColor = _statusColor();
-    final priorityColor = _priorityColor();
+    final statusColor = ProjectHelper.statusColor(project.status);
+    final priorityColor = ProjectHelper.priorityColor(project.priority);
 
     return Card(
       elevation: 0,
@@ -101,17 +114,48 @@ class _ProjectCardState extends State<ProjectCard> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
+                            const SizedBox(height: AppSpacing.xs),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today_rounded,
+                                  size: 13,
+                                  color: theme.colorScheme.onSurface
+                                      .withAlpha(130),
+                                ),
+                                const SizedBox(width: AppSpacing.xs),
+                                Text(
+                                  'Created ${DateTimeHelper.compactDate(project.createdAt)}',
+                                  style: AppTextStyles.caption(
+                                    color: theme.colorScheme.onSurface
+                                        .withAlpha(130),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      AnimatedRotation(
-                        turns: _isExpanded ? 0.5 : 0,
-                        duration: const Duration(milliseconds: 220),
-                        child: Icon(
-                          Icons.expand_more_rounded,
-                          color: theme.colorScheme.onSurface.withAlpha(180),
-                        ),
+                      Column(
+                        children: [
+                          if (widget.isUpdating)
+                            const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          if (widget.isUpdating)
+                            const SizedBox(height: AppSpacing.sm),
+                          AnimatedRotation(
+                            turns: _isExpanded ? 0.5 : 0,
+                            duration: const Duration(milliseconds: 220),
+                            child: Icon(
+                              Icons.expand_more_rounded,
+                              color: theme.colorScheme.onSurface.withAlpha(180),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -121,11 +165,11 @@ class _ProjectCardState extends State<ProjectCard> {
                     runSpacing: AppSpacing.sm,
                     children: [
                       _ProjectMetaChip(
-                        label: _statusLabel(),
+                        label: ProjectHelper.statusLabel(project.status),
                         color: statusColor,
                       ),
                       _ProjectMetaChip(
-                        label: _priorityLabel(),
+                        label: ProjectHelper.priorityLabel(project.priority),
                         color: priorityColor,
                       ),
                       _ProjectMetaChip(
@@ -164,10 +208,40 @@ class _ProjectCardState extends State<ProjectCard> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
+                                Text(
+                                  'Status',
+                                  style: AppTextStyles.label(
+                                    color: theme.colorScheme.onSurface
+                                        .withAlpha(170),
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                ProjectStatusSelector(
+                                  selectedStatus: project.status,
+                                  onChanged: widget.isUpdating
+                                      ? null
+                                      : widget.onStatusChanged,
+                                ),
+                                const SizedBox(height: AppSpacing.lg),
+                                Text(
+                                  'Priority',
+                                  style: AppTextStyles.label(
+                                    color: theme.colorScheme.onSurface
+                                        .withAlpha(170),
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                ProjectPrioritySelector(
+                                  selectedPriority: project.priority,
+                                  onChanged: widget.isUpdating
+                                      ? null
+                                      : widget.onPriorityChanged,
+                                ),
+                                const SizedBox(height: AppSpacing.lg),
                                 ProjectTaskPreviewList(tasks: project.tasks),
                                 const SizedBox(height: AppSpacing.md),
                                 Align(
-                                  alignment: Alignment.centerRight,
+                                  alignment: Alignment.center,
                                   child: TextButton.icon(
                                     onPressed: _openDetails,
                                     icon: const Icon(Icons.open_in_new_rounded),
@@ -202,38 +276,6 @@ class _ProjectCardState extends State<ProjectCard> {
         'createdAt': project.createdAt.toIso8601String(),
       },
     );
-  }
-
-  Color _priorityColor() {
-    return switch (project.priority) {
-      ProjectPriority.low => AppColors.priorityLow,
-      ProjectPriority.medium => AppColors.priorityMedium,
-      ProjectPriority.high => AppColors.priorityHigh,
-    };
-  }
-
-  String _priorityLabel() {
-    return switch (project.priority) {
-      ProjectPriority.low => 'Low',
-      ProjectPriority.medium => 'Medium',
-      ProjectPriority.high => 'High',
-    };
-  }
-
-  Color _statusColor() {
-    return switch (project.status) {
-      ProjectStatus.active => AppColors.statusActive,
-      ProjectStatus.onHold => AppColors.statusOnHold,
-      ProjectStatus.completed => AppColors.statusCompleted,
-    };
-  }
-
-  String _statusLabel() {
-    return switch (project.status) {
-      ProjectStatus.active => 'Active',
-      ProjectStatus.onHold => 'On Hold',
-      ProjectStatus.completed => 'Completed',
-    };
   }
 
   void _toggleExpanded() {

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/helper/date_time_helper.dart';
+import '../../../../core/helper/project_helper.dart';
 import '../../../projects/domain/entities/project_entity.dart';
 import '../../../projects/presentation/widgets/project_card_media.dart';
 
@@ -13,8 +15,8 @@ class ProjectInfoPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = _statusColor();
-    final priorityColor = _priorityColor();
+    final statusColor = ProjectHelper.statusColor(project.status);
+    final priorityColor = ProjectHelper.priorityColor(project.priority);
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.xl),
@@ -30,6 +32,24 @@ class ProjectInfoPanel extends StatelessWidget {
             const SizedBox(height: AppSpacing.lg),
             Text(project.name, style: AppTextStyles.headingM()),
             const SizedBox(height: AppSpacing.sm),
+            Row(
+              children: [
+                Icon(
+                  Icons.calendar_today_rounded,
+                  size: 13,
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(130),
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                Text(
+                  'Created ${DateTimeHelper.compactDate(project.createdAt)}',
+                  style: AppTextStyles.caption(
+                    color:
+                        Theme.of(context).colorScheme.onSurface.withAlpha(130),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               project.description?.trim().isNotEmpty == true
                   ? project.description!.trim()
@@ -42,11 +62,11 @@ class ProjectInfoPanel extends StatelessWidget {
               runSpacing: AppSpacing.sm,
               children: [
                 _InfoChip(
-                  label: _statusLabel(),
+                  label: ProjectHelper.statusLabel(project.status),
                   color: statusColor,
                 ),
                 _InfoChip(
-                  label: _priorityLabel(),
+                  label: ProjectHelper.priorityLabel(project.priority),
                   color: priorityColor,
                 ),
                 _InfoChip(
@@ -101,38 +121,6 @@ class ProjectInfoPanel extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _statusColor() {
-    return switch (project.status) {
-      ProjectStatus.active => AppColors.statusActive,
-      ProjectStatus.onHold => AppColors.statusOnHold,
-      ProjectStatus.completed => AppColors.statusCompleted,
-    };
-  }
-
-  Color _priorityColor() {
-    return switch (project.priority) {
-      ProjectPriority.low => AppColors.priorityLow,
-      ProjectPriority.medium => AppColors.priorityMedium,
-      ProjectPriority.high => AppColors.priorityHigh,
-    };
-  }
-
-  String _statusLabel() {
-    return switch (project.status) {
-      ProjectStatus.active => 'Active',
-      ProjectStatus.onHold => 'On Hold',
-      ProjectStatus.completed => 'Completed',
-    };
-  }
-
-  String _priorityLabel() {
-    return switch (project.priority) {
-      ProjectPriority.low => 'Low',
-      ProjectPriority.medium => 'Medium',
-      ProjectPriority.high => 'High',
-    };
   }
 }
 
