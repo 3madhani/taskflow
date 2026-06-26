@@ -77,7 +77,7 @@ class _ShellScreenState extends State<ShellScreen>
       projectsBloc.add(
         CreateProject(
           name: result['name'] as String,
-          description: result['description'] as String,
+          description: result['description'] as String?,
           imageUrl: result['imageUrl'] as String?,
           status: result['status'] as String,
           priority: result['priority'] as String,

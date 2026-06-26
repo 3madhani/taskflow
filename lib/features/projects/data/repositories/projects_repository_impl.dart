@@ -33,10 +33,13 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
         status: status,
         priority: priority,
       );
+      await _localDatasource.saveProject(model.withoutTasks());
       return Right(model.toEntity());
     } on AuthException catch (e) {
       return Left(UnauthorizedFailure(e.message));
     } on PostgrestException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on StorageException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
