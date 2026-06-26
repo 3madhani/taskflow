@@ -3,6 +3,8 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 
 const _taskFlowIconPath = 'assets/icons/taskflow_icon.png';
+const _taskFlowIconSize = 112.0;
+const _taskFlowIconRadius = 28.0;
 
 class AuthHeader extends StatelessWidget {
   final String subtitle;
@@ -17,15 +19,15 @@ class AuthHeader extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 72,
-          height: 72,
+          width: _taskFlowIconSize,
+          height: _taskFlowIconSize,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(_taskFlowIconRadius),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withAlpha(45),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
+                blurRadius: 22,
+                offset: const Offset(0, 8),
               ),
             ],
           ),

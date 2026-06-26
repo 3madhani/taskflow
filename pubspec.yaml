@@ -56,6 +56,7 @@ flutter:
 
   assets:
     - assets/icons/taskflow_icon.png
+    - assets/icons/taskflow_splash.png
 
 flutter_launcher_icons:
   android: true
@@ -68,13 +69,13 @@ flutter_launcher_icons:
 flutter_native_splash:
   color: "#FFFFFF"
   color_dark: "#0F0F1A"
-  image: assets/icons/taskflow_icon.png
-  image_dark: assets/icons/taskflow_icon.png
+  image: assets/icons/taskflow_splash.png
+  image_dark: assets/icons/taskflow_splash.png
   android: true
   ios: true
   web: false
   android_12:
     color: "#FFFFFF"
     color_dark: "#0F0F1A"
-    image: assets/icons/taskflow_icon.png
-    image_dark: assets/icons/taskflow_icon.png
+    image: assets/icons/taskflow_splash.png
+    image_dark: assets/icons/taskflow_splash.png
