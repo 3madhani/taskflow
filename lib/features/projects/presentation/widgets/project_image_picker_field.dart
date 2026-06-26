@@ -1,7 +1,10 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -94,49 +97,36 @@ class _ProjectImagePickerFieldState extends State<ProjectImagePickerField> {
     widget.controller.clear();
   }
 
-  String _mimeTypeFor(XFile image) {
-    final lowerName = image.name.toLowerCase();
-    if (image.mimeType != null && image.mimeType!.startsWith('image/')) {
-      return image.mimeType!;
-    }
-    if (lowerName.endsWith('.png')) {
-      return 'image/png';
-    }
-    if (lowerName.endsWith('.webp')) {
-      return 'image/webp';
-    }
-    return 'image/jpeg';
-  }
-
   Future<void> _pickImage() async {
     setState(() => _isPicking = true);
 
     try {
       final image = await _picker.pickImage(
         source: ImageSource.gallery,
-        maxWidth: 1600,
-        imageQuality: 82,
+        requestFullMetadata: false,
       );
 
       if (image == null) {
         return;
       }
 
-      final bytes = await image.readAsBytes();
+      final storedImagePath = await _storeImage(image);
       if (!mounted) {
         return;
       }
 
-      widget.controller.text =
-          'data:${_mimeTypeFor(image)};base64,${base64Encode(bytes)}';
-    } catch (_) {
+      widget.controller.text = storedImagePath;
+    } catch (error, stackTrace) {
+      debugPrint('Project image picker failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+
       if (!mounted) {
         return;
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not choose image'),
+        SnackBar(
+          content: Text(_errorMessageFor(error)),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -145,6 +135,44 @@ class _ProjectImagePickerFieldState extends State<ProjectImagePickerField> {
         setState(() => _isPicking = false);
       }
     }
+  }
+
+  String _errorMessageFor(Object error) {
+    if (error is MissingPluginException) {
+      return 'Image picker is not ready. Restart the app and try again.';
+    }
+    if (error is PlatformException) {
+      return 'Could not choose image: ${error.message ?? error.code}';
+    }
+    return 'Could not choose image';
+  }
+
+  String _extensionFor(XFile image) {
+    final extension = path.extension(image.name).toLowerCase();
+    if (extension == '.jpg' ||
+        extension == '.jpeg' ||
+        extension == '.png' ||
+        extension == '.webp') {
+      return extension;
+    }
+    return '.jpg';
+  }
+
+  Future<String> _storeImage(XFile image) async {
+    final documentsDirectory = await getApplicationDocumentsDirectory();
+    final imagesDirectory = Directory(
+      path.join(documentsDirectory.path, 'project_images'),
+    );
+    if (!await imagesDirectory.exists()) {
+      await imagesDirectory.create(recursive: true);
+    }
+
+    final fileName =
+        'project_${DateTime.now().microsecondsSinceEpoch}${_extensionFor(image)}';
+    final storedImage = File(path.join(imagesDirectory.path, fileName));
+    final bytes = await image.readAsBytes();
+    await storedImage.writeAsBytes(bytes, flush: true);
+    return storedImage.path;
   }
 }
 

@@ -59,17 +59,6 @@ class ProjectModel extends HiveObject {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'user_id': userId,
-        'name': name,
-        'description': description,
-        'image_url': imageUrl,
-        'status': status,
-        'priority': priority,
-        'created_at': createdAt,
-      };
-
   ProjectEntity toEntity() {
     ProjectStatus entityStatus;
     switch (status) {
@@ -117,6 +106,17 @@ class ProjectModel extends HiveObject {
       tasks: taskSummaries,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'user_id': userId,
+        'name': name,
+        'description': description,
+        'image_url': imageUrl,
+        'status': status,
+        'priority': priority,
+        'created_at': createdAt,
+      };
 
   ProjectModel withoutTasks() => ProjectModel(
         id: id,

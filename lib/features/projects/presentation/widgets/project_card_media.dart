@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -70,11 +71,24 @@ class ProjectCardMedia extends StatelessWidget {
     final isRemoteImage =
         uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
     if (!isRemoteImage) {
-      return _fallback(theme);
+      return _buildFileImage(imageValue, theme);
     }
 
     return Image.network(
       imageValue,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => _fallback(theme),
+    );
+  }
+
+  Widget _buildFileImage(String imageValue, ThemeData theme) {
+    final file = File(imageValue);
+    if (!file.existsSync()) {
+      return _fallback(theme);
+    }
+
+    return Image.file(
+      file,
       fit: BoxFit.cover,
       errorBuilder: (_, __, ___) => _fallback(theme),
     );
