@@ -19,10 +19,10 @@ class TaskModel extends HiveObject {
   final String? description;
 
   @HiveField(4)
-  final String status; // 'pending' | 'in_progress' | 'done'
+  final String status;
 
   @HiveField(5)
-  final String priority; // 'low' | 'medium' | 'high'
+  final String priority;
 
   @HiveField(6)
   final String createdAt;

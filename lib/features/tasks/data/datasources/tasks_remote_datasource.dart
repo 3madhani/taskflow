@@ -7,7 +7,6 @@ import '../models/task_model.dart';
 class TasksRemoteDatasource {
   final _db = Supabase.instance.client;
 
-  /// GET tasks for a specific project
   Future<List<TaskModel>> getTasks(String projectId) async {
     final response = await _db
         .from('tasks')
@@ -19,24 +18,26 @@ class TasksRemoteDatasource {
         .toList();
   }
 
-  /// POST — create task
   Future<TaskModel> createTask({
     required String projectId,
     required String title,
     String? description,
     required String priority,
   }) async {
-    final response = await _db.from('tasks').insert({
-      'project_id': projectId,
-      'title': title,
-      'description': description,
-      'status': 'pending',
-      'priority': priority,
-    }).select().single();
+    final response = await _db
+        .from('tasks')
+        .insert({
+          'project_id': projectId,
+          'title': title,
+          'description': description,
+          'status': 'pending',
+          'priority': priority,
+        })
+        .select()
+        .single();
     return TaskModel.fromJson(response);
   }
 
-  /// PATCH — update task status (cycle: pending → in_progress → done)
   Future<TaskModel> updateTaskStatus({
     required String taskId,
     required String status,
@@ -50,7 +51,6 @@ class TasksRemoteDatasource {
     return TaskModel.fromJson(response);
   }
 
-  /// DELETE — remove a task
   Future<void> deleteTask(String taskId) async {
     await _db.from('tasks').delete().eq('id', taskId);
   }

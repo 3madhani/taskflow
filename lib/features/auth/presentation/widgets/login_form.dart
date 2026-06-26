@@ -73,9 +73,13 @@ class _LoginFormState extends State<LoginForm> {
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 validator: (value) {
-                  if (value == null || value.isEmpty) return AppStrings.fieldRequired;
+                  if (value == null || value.isEmpty) {
+                    return AppStrings.fieldRequired;
+                  }
                   final regex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
-                  if (!regex.hasMatch(value)) return AppStrings.invalidEmail;
+                  if (!regex.hasMatch(value)) {
+                    return AppStrings.invalidEmail;
+                  }
                   return null;
                 },
               ),
@@ -88,8 +92,12 @@ class _LoginFormState extends State<LoginForm> {
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) => _onSubmit(),
                 validator: (value) {
-                  if (value == null || value.isEmpty) return AppStrings.fieldRequired;
-                  if (value.length < 6) return AppStrings.passwordTooShort;
+                  if (value == null || value.isEmpty) {
+                    return AppStrings.fieldRequired;
+                  }
+                  if (value.length < 6) {
+                    return AppStrings.passwordTooShort;
+                  }
                   return null;
                 },
               ),
@@ -102,7 +110,8 @@ class _LoginFormState extends State<LoginForm> {
               const SizedBox(height: AppSpacing.lg),
               Center(
                 child: TextButton(
-                  onPressed: widget.isLoading ? null : () => context.push('/register'),
+                  onPressed:
+                      widget.isLoading ? null : () => context.push('/register'),
                   child: Text(
                     AppStrings.dontHaveAccount,
                     style: AppTextStyles.bodyM(color: AppColors.primary),

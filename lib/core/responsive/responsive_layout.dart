@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import '../constants/app_breakpoints.dart';
 
 class ResponsiveLayout extends StatelessWidget {
-  final Widget Function(BuildContext context, BoxConstraints constraints) mobile;
-  final Widget Function(BuildContext context, BoxConstraints constraints)? tablet;
+  final Widget Function(BuildContext context, BoxConstraints constraints)
+      mobile;
+  final Widget Function(BuildContext context, BoxConstraints constraints)?
+      tablet;
 
   const ResponsiveLayout({
     required this.mobile,

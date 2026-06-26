@@ -27,10 +27,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<RegisterRequested>(_onRegisterRequested);
     on<LogoutRequested>(_onLogoutRequested);
     on<CheckAuthStatus>(_onCheckAuthStatus);
-    on<AuthSignOutTriggered>((event, emit) => emit(const AuthUnauthenticated()));
+    on<AuthSignOutTriggered>(
+        (event, emit) => emit(const AuthUnauthenticated()));
 
-    // Listen to Supabase auth state changes — drives GoRouter redirect.
-    // This replaces the manual token-check pattern.
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final event = data.event;
       if (event == AuthChangeEvent.signedIn ||
@@ -90,7 +89,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     CheckAuthStatus event,
     Emitter<AuthState> emit,
   ) async {
-    // Reads from Supabase.instance.client.auth.currentUser — NOT from Hive.
     final result = await _authRepository.getCurrentUser();
     result.fold(
       (failure) => emit(const AuthUnauthenticated()),

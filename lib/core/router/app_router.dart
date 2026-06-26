@@ -80,8 +80,11 @@ GoRouter createRouter() {
                   name: extraMap['name'] as String,
                   description: extraMap['description'] as String?,
                   status: ProjectStatus.values[extraMap['statusIndex'] as int],
-                  priority: ProjectPriority.values[extraMap['priorityIndex'] as int? ?? 1],
-                  createdAt: DateTime.tryParse(extraMap['createdAt'] as String? ?? '') ?? DateTime.now(),
+                  priority: ProjectPriority
+                      .values[extraMap['priorityIndex'] as int? ?? 1],
+                  createdAt: DateTime.tryParse(
+                          extraMap['createdAt'] as String? ?? '') ??
+                      DateTime.now(),
                 )
               : null;
           return _slideFromRightPage(

@@ -4,7 +4,6 @@ import '../../../../core/enums/app_enums.dart';
 export '../../../../core/enums/app_enums.dart'
     show ProjectStatus, ProjectPriority;
 
-/// Domain entity for a project. IDs are UUIDs (String) from Supabase.
 class ProjectEntity extends Equatable {
   final String id;
   final String userId;
@@ -26,13 +25,10 @@ class ProjectEntity extends Equatable {
     this.tasks = const [],
   });
 
-  /// Number of tasks that are marked as done.
   int get doneTasks => tasks.where((t) => t.isDone).length;
 
-  /// Total number of tasks.
   int get totalTasks => tasks.length;
 
-  /// Completion ratio 0.0–1.0.
   double get progress => totalTasks == 0 ? 0.0 : doneTasks / totalTasks;
 
   @override
@@ -40,11 +36,9 @@ class ProjectEntity extends Equatable {
       [id, userId, name, description, status, priority, createdAt, tasks];
 }
 
-/// Lightweight task summary embedded in a project — enough data to show
-/// the progress bar in ProjectCard without loading full TaskEntity objects.
 class TaskSummary extends Equatable {
   final String id;
-  final String status; // 'pending' | 'in_progress' | 'done'
+  final String status;
 
   const TaskSummary({required this.id, required this.status});
 

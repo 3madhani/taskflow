@@ -4,7 +4,6 @@ import '../../domain/entities/project_entity.dart';
 
 part 'project_model.g.dart';
 
-// Hive typeId: 1 — never reuse this typeId
 @HiveType(typeId: 1)
 class ProjectModel extends HiveObject {
   @HiveField(0)
@@ -20,17 +19,14 @@ class ProjectModel extends HiveObject {
   final String? description;
 
   @HiveField(4)
-  final String status; // 'active' | 'on_hold' | 'completed'
+  final String status;
 
   @HiveField(5)
-  final String priority; // 'low' | 'medium' | 'high'
+  final String priority;
 
   @HiveField(6)
   final String createdAt;
 
-  // Tasks list is not stored in Hive — fetched fresh from remote.
-  // This field is only populated when fetching with .select('*, tasks(*)').
-  @JsonKey(defaultValue: [])
   final List<Map<String, dynamic>> tasks;
 
   ProjectModel({
@@ -112,7 +108,6 @@ class ProjectModel extends HiveObject {
     );
   }
 
-  /// Create a cached version without tasks (tasks are not stored in Hive).
   ProjectModel withoutTasks() => ProjectModel(
         id: id,
         userId: userId,

@@ -20,14 +20,14 @@ class AppStrings {
   static const String loggingIn = 'Logging in...';
   static const String registering = 'Registering...';
   static const String logoutConfirmTitle = 'Logout?';
-  static const String logoutConfirmMessage =
-      'Are you sure you want to logout?';
+  static const String logoutConfirmMessage = 'Are you sure you want to logout?';
   static const String cancel = 'Cancel';
   static const String confirm = 'Confirm';
 
   static const String fieldRequired = 'This field is required';
   static const String invalidEmail = 'Enter a valid email address';
-  static const String passwordTooShort = 'Password must be at least 6 characters';
+  static const String passwordTooShort =
+      'Password must be at least 6 characters';
   static const String passwordsDoNotMatch = 'Passwords do not match';
   static const String nameTooShort = 'Name must be at least 2 characters';
 
@@ -44,7 +44,8 @@ class AppStrings {
   static const String taskTitleHint = 'Enter task title';
   static const String priority = 'Priority';
   static const String noTasksTitle = 'No Tasks Yet';
-  static const String noTasksSubtitle = 'Add your first task using the + button.';
+  static const String noTasksSubtitle =
+      'Add your first task using the + button.';
   static const String statusPending = 'Pending';
   static const String statusInProgress = 'In Progress';
   static const String statusDone = 'Done';
@@ -58,7 +59,8 @@ class AppStrings {
   static const String accountInfo = 'Account Info';
 
   static const String error = 'Something went wrong';
-  static const String noInternet = 'No internet connection. Showing cached data.';
+  static const String noInternet =
+      'No internet connection. Showing cached data.';
   static const String noCachedData =
       'No cached data. Please connect to the internet.';
   static const String loading = 'Loading...';

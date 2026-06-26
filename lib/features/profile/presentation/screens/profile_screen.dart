@@ -57,7 +57,8 @@ class ProfileScreen extends StatelessWidget {
                       name = authState.user.name;
                       email = authState.user.email;
                     } else {
-                      final supabaseUser = Supabase.instance.client.auth.currentUser;
+                      final supabaseUser =
+                          Supabase.instance.client.auth.currentUser;
                       name = supabaseUser?.userMetadata?['name'] as String?;
                       email = supabaseUser?.email;
                     }

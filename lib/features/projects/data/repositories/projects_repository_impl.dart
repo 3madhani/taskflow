@@ -16,39 +16,6 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   const ProjectsRepositoryImpl(this._remoteDatasource, this._localDatasource);
 
   @override
-  Future<Either<Failure, List<ProjectEntity>>> getProjects() async {
-    try {
-      final remoteProjects = await _remoteDatasource.getProjects();
-      // Cache for offline use (without embedded tasks list which changes often).
-      await _localDatasource.cacheProjects(
-        remoteProjects.map((p) => p.withoutTasks()).toList(),
-      );
-      return Right(remoteProjects.map((m) => m.toEntity()).toList());
-    } on AuthException catch (e) {
-      return Left(UnauthorizedFailure(e.message));
-    } on PostgrestException catch (e) {
-      // Network failure — try Hive cache fallback.
-      return _tryCache(e.message);
-    } catch (e) {
-      return _tryCache(e.toString());
-    }
-  }
-
-  Future<Either<Failure, List<ProjectEntity>>> _tryCache(
-      String errorMessage) async {
-    try {
-      final cached = _localDatasource.getCachedProjects();
-      if (cached.isEmpty) {
-        return const Left(CacheFailure(
-            'No internet connection and no cached data available.'));
-      }
-      return Right(cached.map((m) => m.toEntity()).toList());
-    } catch (_) {
-      return Left(ServerFailure(errorMessage));
-    }
-  }
-
-  @override
   Future<Either<Failure, ProjectEntity>> createProject({
     required String name,
     String? description,
@@ -83,6 +50,37 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ProjectEntity>>> getProjects() async {
+    try {
+      final remoteProjects = await _remoteDatasource.getProjects();
+      await _localDatasource.cacheProjects(
+        remoteProjects.map((p) => p.withoutTasks()).toList(),
+      );
+      return Right(remoteProjects.map((m) => m.toEntity()).toList());
+    } on AuthException catch (e) {
+      return Left(UnauthorizedFailure(e.message));
+    } on PostgrestException catch (e) {
+      return _tryCache(e.message);
+    } catch (e) {
+      return _tryCache(e.toString());
+    }
+  }
+
+  Future<Either<Failure, List<ProjectEntity>>> _tryCache(
+      String errorMessage) async {
+    try {
+      final cached = _localDatasource.getCachedProjects();
+      if (cached.isEmpty) {
+        return Left(CacheFailure(
+            'Connection failed: $errorMessage. No cached data available.'));
+      }
+      return Right(cached.map((m) => m.toEntity()).toList());
+    } catch (_) {
+      return Left(ServerFailure(errorMessage));
     }
   }
 }

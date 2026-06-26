@@ -74,8 +74,12 @@ class _RegisterFormState extends State<RegisterForm> {
                 controller: _nameController,
                 textInputAction: TextInputAction.next,
                 validator: (value) {
-                  if (value == null || value.isEmpty) return AppStrings.fieldRequired;
-                  if (value.trim().length < 2) return AppStrings.nameTooShort;
+                  if (value == null || value.isEmpty) {
+                    return AppStrings.fieldRequired;
+                  }
+                  if (value.trim().length < 2) {
+                    return AppStrings.nameTooShort;
+                  }
                   return null;
                 },
               ),
@@ -87,9 +91,13 @@ class _RegisterFormState extends State<RegisterForm> {
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 validator: (value) {
-                  if (value == null || value.isEmpty) return AppStrings.fieldRequired;
+                  if (value == null || value.isEmpty) {
+                    return AppStrings.fieldRequired;
+                  }
                   final regex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
-                  if (!regex.hasMatch(value)) return AppStrings.invalidEmail;
+                  if (!regex.hasMatch(value)) {
+                    return AppStrings.invalidEmail;
+                  }
                   return null;
                 },
               ),
@@ -101,8 +109,12 @@ class _RegisterFormState extends State<RegisterForm> {
                 obscureText: true,
                 textInputAction: TextInputAction.next,
                 validator: (value) {
-                  if (value == null || value.isEmpty) return AppStrings.fieldRequired;
-                  if (value.length < 6) return AppStrings.passwordTooShort;
+                  if (value == null || value.isEmpty) {
+                    return AppStrings.fieldRequired;
+                  }
+                  if (value.length < 6) {
+                    return AppStrings.passwordTooShort;
+                  }
                   return null;
                 },
               ),
@@ -115,8 +127,12 @@ class _RegisterFormState extends State<RegisterForm> {
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) => _onSubmit(),
                 validator: (value) {
-                  if (value == null || value.isEmpty) return AppStrings.fieldRequired;
-                  if (value != _passwordController.text) return AppStrings.passwordsDoNotMatch;
+                  if (value == null || value.isEmpty) {
+                    return AppStrings.fieldRequired;
+                  }
+                  if (value != _passwordController.text) {
+                    return AppStrings.passwordsDoNotMatch;
+                  }
                   return null;
                 },
               ),

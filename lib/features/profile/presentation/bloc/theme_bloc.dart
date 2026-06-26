@@ -16,13 +16,16 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   }
 
   Future<void> _onLoadTheme(LoadTheme event, Emitter<ThemeState> emit) async {
-    final savedMode = _hiveStorage.read<String>(HiveBoxes.settings, HiveKeys.themeMode);
+    final savedMode =
+        _hiveStorage.read<String>(HiveBoxes.settings, HiveKeys.themeMode);
     final themeMode = savedMode == 'dark' ? ThemeMode.dark : ThemeMode.light;
     emit(state.copyWith(themeMode: themeMode));
   }
 
-  Future<void> _onToggleTheme(ToggleTheme event, Emitter<ThemeState> emit) async {
-    final newMode = state.themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+  Future<void> _onToggleTheme(
+      ToggleTheme event, Emitter<ThemeState> emit) async {
+    final newMode =
+        state.themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
     await _hiveStorage.write<String>(
       HiveBoxes.settings,
       HiveKeys.themeMode,

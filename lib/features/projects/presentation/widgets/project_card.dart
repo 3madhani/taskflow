@@ -183,7 +183,8 @@ class ProjectCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: priorityColor.withAlpha(25),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: priorityColor.withAlpha(80)),
+                          border:
+                              Border.all(color: priorityColor.withAlpha(80)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -199,7 +200,8 @@ class ProjectCard extends StatelessWidget {
                             const SizedBox(width: AppSpacing.xs),
                             Text(
                               _priorityLabel(),
-                              style: AppTextStyles.caption(color: priorityColor),
+                              style:
+                                  AppTextStyles.caption(color: priorityColor),
                             ),
                           ],
                         ),

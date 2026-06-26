@@ -26,7 +26,8 @@ class RegisterScreen extends StatelessWidget {
                 content: Text(state.message),
                 backgroundColor: AppColors.error,
                 behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
             );
           }
@@ -49,7 +50,10 @@ class RegisterScreen extends StatelessWidget {
                         const AuthHeader(
                           icon: Icons.person_add_rounded,
                           subtitle: 'Create your account to get started.',
-                          gradientColors: [AppColors.secondary, AppColors.primary],
+                          gradientColors: [
+                            AppColors.secondary,
+                            AppColors.primary
+                          ],
                         ),
                         const SizedBox(height: AppSpacing.xxxl),
                         RegisterForm(isLoading: isLoading),

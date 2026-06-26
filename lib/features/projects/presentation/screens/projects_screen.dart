@@ -84,15 +84,17 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
               sliver: BlocBuilder<ProjectsBloc, ProjectsState>(
                 builder: (context, state) {
                   return switch (state) {
-                    ProjectsInitial() => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                    ProjectsInitial() =>
+                      const SliverToBoxAdapter(child: SizedBox.shrink()),
                     ProjectsLoading() => const SliverFillRemaining(
                         child: Center(child: CircularProgressIndicator()),
                       ),
                     ProjectsError(:final message) => SliverFillRemaining(
                         child: AppErrorWidget(
                           message: message,
-                          onRetry: () =>
-                              context.read<ProjectsBloc>().add(const LoadProjects()),
+                          onRetry: () => context
+                              .read<ProjectsBloc>()
+                              .add(const LoadProjects()),
                         ),
                       ),
                     ProjectsLoaded(:final projects) when projects.isEmpty =>
@@ -101,12 +103,14 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                           icon: Icons.folder_open_rounded,
                           title: AppStrings.noProjectsTitle,
                           subtitle: AppStrings.noProjectsSubtitle,
-                          onRetry: () =>
-                              context.read<ProjectsBloc>().add(const RefreshProjects()),
+                          onRetry: () => context
+                              .read<ProjectsBloc>()
+                              .add(const RefreshProjects()),
                           retryLabel: 'Refresh',
                         ),
                       ),
-                    ProjectsLoaded(:final projects) => _buildProjectList(context, projects),
+                    ProjectsLoaded(:final projects) =>
+                      _buildProjectList(context, projects),
                   };
                 },
               ),

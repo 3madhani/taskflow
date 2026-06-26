@@ -26,7 +26,8 @@ class LoginScreen extends StatelessWidget {
                 content: Text(state.message),
                 backgroundColor: AppColors.error,
                 behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
             );
           }
@@ -49,7 +50,10 @@ class LoginScreen extends StatelessWidget {
                         const AuthHeader(
                           icon: Icons.task_alt_rounded,
                           subtitle: 'Welcome back! Login to continue.',
-                          gradientColors: [AppColors.primary, AppColors.secondary],
+                          gradientColors: [
+                            AppColors.primary,
+                            AppColors.secondary
+                          ],
                         ),
                         const SizedBox(height: AppSpacing.xxxl),
                         LoginForm(isLoading: isLoading),

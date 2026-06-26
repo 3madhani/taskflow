@@ -43,4 +43,3 @@ class DeleteProject extends ProjectsEvent {
   @override
   List<Object?> get props => [projectId];
 }
-

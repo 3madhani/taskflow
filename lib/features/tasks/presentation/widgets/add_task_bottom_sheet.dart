@@ -37,7 +37,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       context.read<TasksBloc>().add(
             AddTask(
               title: _titleController.text.trim(),
-              description: _descController.text.trim().isEmpty ? null : _descController.text.trim(),
+              description: _descController.text.trim().isEmpty
+                  ? null
+                  : _descController.text.trim(),
               projectId: widget.projectId,
               priority: _selectedPriority,
             ),
@@ -118,7 +120,10 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   Text(
                     AppStrings.priority,
                     style: AppTextStyles.label(
-                      color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withAlpha(180),
                     ),
                   ),
                   const SizedBox(height: 6),

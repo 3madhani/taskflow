@@ -91,7 +91,8 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
     final currentTasks = _currentTasks();
     if (currentTasks == null) return;
 
-    final updatedTasks = currentTasks.where((t) => t.id != event.taskId).toList();
+    final updatedTasks =
+        currentTasks.where((t) => t.id != event.taskId).toList();
 
     final result = await _deleteTaskUseCase(event.taskId);
 
@@ -121,4 +122,3 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
     };
   }
 }
-

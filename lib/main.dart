@@ -22,8 +22,8 @@ void main() async {
   Hive.registerAdapter(TaskModelAdapter());
 
   await Future.wait([
-    Hive.openBox<ProjectModel>(HiveBoxes.projects),
-    Hive.openBox<TaskModel>(HiveBoxes.tasks),
+    Hive.openBox(HiveBoxes.projects),
+    Hive.openBox(HiveBoxes.tasks),
     Hive.openBox(HiveBoxes.settings),
   ]);
 

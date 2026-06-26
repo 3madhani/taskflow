@@ -49,4 +49,3 @@ class AuthSignOutTriggered extends AuthEvent {
   @override
   List<Object?> get props => [];
 }
-

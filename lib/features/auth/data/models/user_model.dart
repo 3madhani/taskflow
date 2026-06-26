@@ -4,7 +4,6 @@ import '../../domain/entities/user_entity.dart';
 
 part 'user_model.g.dart';
 
-// Hive typeId: 0 — never reuse this typeId
 @HiveType(typeId: 0)
 class UserModel extends HiveObject {
   @HiveField(0)
@@ -22,8 +21,6 @@ class UserModel extends HiveObject {
     this.name,
   });
 
-  /// Build a UserModel from a Supabase Auth [User] object.
-  /// JWT is managed automatically by the SDK — we only cache the profile data.
   factory UserModel.fromSupabase(User user) => UserModel(
         id: user.id,
         email: user.email ?? '',

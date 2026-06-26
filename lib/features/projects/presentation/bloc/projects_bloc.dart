@@ -87,4 +87,3 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
     );
   }
 }
-

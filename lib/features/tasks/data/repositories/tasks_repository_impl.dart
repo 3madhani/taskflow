@@ -18,7 +18,8 @@ class TasksRepositoryImpl implements TasksRepository {
   const TasksRepositoryImpl(this._remoteDatasource, this._localDatasource);
 
   @override
-  Future<Either<Failure, List<TaskEntity>>> getTasksByProject(String projectId) async {
+  Future<Either<Failure, List<TaskEntity>>> getTasksByProject(
+      String projectId) async {
     try {
       final remoteTasks = await _remoteDatasource.getTasks(projectId);
       await _localDatasource.cacheTasks(projectId, remoteTasks);
@@ -37,8 +38,8 @@ class TasksRepositoryImpl implements TasksRepository {
     try {
       final cached = _localDatasource.getCachedTasks(projectId);
       if (cached.isEmpty) {
-        return const Left(CacheFailure(
-            'No internet connection and no cached data available.'));
+        return Left(CacheFailure(
+            'Connection failed: $errorMessage. No cached data available.'));
       }
       return Right(cached.map((m) => m.toEntity()).toList());
     } catch (_) {
@@ -71,7 +72,8 @@ class TasksRepositoryImpl implements TasksRepository {
   Future<Either<Failure, TaskEntity>> _tryLocalUpdate(
       String taskId, TaskStatus newStatus, String errorMessage) async {
     try {
-      final allTasks = _localDatasource.hiveStorage.readAll<TaskModel>(HiveBoxes.tasks);
+      final allTasks =
+          _localDatasource.hiveStorage.readAll<TaskModel>(HiveBoxes.tasks);
       final task = allTasks.firstWhere((t) => t.id == taskId);
       final updated = TaskModel(
         id: task.id,
@@ -109,9 +111,11 @@ class TasksRepositoryImpl implements TasksRepository {
     } on AuthException catch (e) {
       return Left(UnauthorizedFailure(e.message));
     } on PostgrestException catch (e) {
-      return _tryLocalCreate(title, projectId, priority, description, e.message);
+      return _tryLocalCreate(
+          title, projectId, priority, description, e.message);
     } catch (e) {
-      return _tryLocalCreate(title, projectId, priority, description, e.toString());
+      return _tryLocalCreate(
+          title, projectId, priority, description, e.toString());
     }
   }
 
@@ -144,9 +148,10 @@ class TasksRepositoryImpl implements TasksRepository {
   Future<Either<Failure, void>> deleteTask(String taskId) async {
     try {
       await _remoteDatasource.deleteTask(taskId);
-      // Clean from cache if possible
-      final allTasks = _localDatasource.hiveStorage.readAll<TaskModel>(HiveBoxes.tasks);
-      final task = allTasks.firstWhere((t) => t.id == taskId, orElse: () => throw Exception());
+      final allTasks =
+          _localDatasource.hiveStorage.readAll<TaskModel>(HiveBoxes.tasks);
+      final task = allTasks.firstWhere((t) => t.id == taskId,
+          orElse: () => throw Exception());
       await _localDatasource.deleteTask(task.projectId, taskId);
       return const Right(null);
     } on AuthException catch (e) {

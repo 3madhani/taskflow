@@ -9,7 +9,8 @@ class CreateProjectBottomSheet extends StatefulWidget {
   const CreateProjectBottomSheet({super.key});
 
   @override
-  State<CreateProjectBottomSheet> createState() => _CreateProjectBottomSheetState();
+  State<CreateProjectBottomSheet> createState() =>
+      _CreateProjectBottomSheetState();
 }
 
 class _CreateProjectBottomSheetState extends State<CreateProjectBottomSheet> {
@@ -97,7 +98,8 @@ class _CreateProjectBottomSheetState extends State<CreateProjectBottomSheet> {
                   items: const [
                     DropdownMenuItem(value: 'active', child: Text('Active')),
                     DropdownMenuItem(value: 'on_hold', child: Text('On Hold')),
-                    DropdownMenuItem(value: 'completed', child: Text('Completed')),
+                    DropdownMenuItem(
+                        value: 'completed', child: Text('Completed')),
                   ],
                   onChanged: (val) {
                     if (val != null) {
