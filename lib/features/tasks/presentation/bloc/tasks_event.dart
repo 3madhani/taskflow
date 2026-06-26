@@ -6,7 +6,7 @@ sealed class TasksEvent extends Equatable {
 }
 
 class LoadTasks extends TasksEvent {
-  final int projectId;
+  final String projectId;
 
   const LoadTasks(this.projectId);
 
@@ -15,7 +15,7 @@ class LoadTasks extends TasksEvent {
 }
 
 class UpdateTaskStatus extends TasksEvent {
-  final int taskId;
+  final String taskId;
   final TaskStatus newStatus;
 
   const UpdateTaskStatus({required this.taskId, required this.newStatus});
@@ -26,15 +26,27 @@ class UpdateTaskStatus extends TasksEvent {
 
 class AddTask extends TasksEvent {
   final String title;
-  final int projectId;
+  final String projectId;
   final TaskPriority priority;
+  final String? description;
 
   const AddTask({
     required this.title,
     required this.projectId,
     required this.priority,
+    this.description,
   });
 
   @override
-  List<Object?> get props => [title, projectId, priority];
+  List<Object?> get props => [title, projectId, priority, description];
+}
+
+class DeleteTask extends TasksEvent {
+  final String taskId;
+  final String projectId;
+
+  const DeleteTask({required this.taskId, required this.projectId});
+
+  @override
+  List<Object?> get props => [taskId, projectId];
 }

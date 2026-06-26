@@ -108,15 +108,29 @@ class TaskCard extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
-              child: Text(
-                task.title,
-                style: AppTextStyles.bodyM(
-                  color: isDone ? Colors.grey : null,
-                ).copyWith(
-                  decoration: isDone ? TextDecoration.lineThrough : null,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    task.title,
+                    style: AppTextStyles.bodyM(
+                      color: isDone ? Colors.grey : null,
+                    ).copyWith(
+                      decoration: isDone ? TextDecoration.lineThrough : null,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (task.description != null && task.description!.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      task.description!,
+                      style: AppTextStyles.caption(color: Colors.grey),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
               ),
             ),
             const SizedBox(width: AppSpacing.sm),

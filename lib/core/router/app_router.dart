@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../storage/hive_constants.dart';
-import '../storage/hive_storage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/projects/domain/entities/project_entity.dart';
@@ -10,20 +9,21 @@ import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/shell/presentation/screens/shell_screen.dart';
 import '../../features/tasks/presentation/screens/project_detail_screen.dart';
 
-GoRouter createRouter(HiveStorage hiveStorage) {
+GoRouter createRouter() {
   return GoRouter(
     initialLocation: '/home',
     debugLogDiagnostics: true,
     redirect: (context, state) {
-      final token = hiveStorage.read<String>(HiveBoxes.auth, HiveKeys.token);
+      final session = Supabase.instance.client.auth.currentSession;
+      final isLoggedIn = session != null;
       final location = state.uri.toString();
 
       final isAuthRoute = location == '/login' || location == '/register';
 
-      if (token == null && !isAuthRoute) {
+      if (!isLoggedIn && !isAuthRoute) {
         return '/login';
       }
-      if (token != null && isAuthRoute) {
+      if (isLoggedIn && isAuthRoute) {
         return '/home';
       }
       return null;
@@ -71,17 +71,17 @@ GoRouter createRouter(HiveStorage hiveStorage) {
       GoRoute(
         path: '/projects/:projectId',
         pageBuilder: (context, state) {
-          final projectId = int.tryParse(
-                state.pathParameters['projectId'] ?? '',
-              ) ??
-              0;
+          final projectId = state.pathParameters['projectId'] ?? '';
           final extraMap = state.extra as Map<String, dynamic>?;
           final project = extraMap != null
               ? ProjectEntity(
-                  id: extraMap['id'] as int,
-                  title: extraMap['title'] as String,
-                  description: extraMap['description'] as String,
+                  id: extraMap['id'] as String,
+                  userId: extraMap['userId'] as String? ?? '',
+                  name: extraMap['name'] as String,
+                  description: extraMap['description'] as String?,
                   status: ProjectStatus.values[extraMap['statusIndex'] as int],
+                  priority: ProjectPriority.values[extraMap['priorityIndex'] as int? ?? 1],
+                  createdAt: DateTime.tryParse(extraMap['createdAt'] as String? ?? '') ?? DateTime.now(),
                 )
               : null;
           return _slideFromRightPage(

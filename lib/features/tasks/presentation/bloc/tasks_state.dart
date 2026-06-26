@@ -39,7 +39,7 @@ class TasksError extends TasksState {
 
 class TaskUpdating extends TasksState {
   final List<TaskEntity> tasks;
-  final int updatingTaskId;
+  final String updatingTaskId;
 
   const TaskUpdating({required this.tasks, required this.updatingTaskId});
 

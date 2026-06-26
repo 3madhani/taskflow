@@ -11,7 +11,7 @@ import '../bloc/tasks_event.dart';
 import '../bloc/tasks_state.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
-  final int projectId;
+  final String projectId;
 
   const AddTaskBottomSheet({required this.projectId, super.key});
 
@@ -22,11 +22,13 @@ class AddTaskBottomSheet extends StatefulWidget {
 class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
+  final _descController = TextEditingController();
   TaskPriority _selectedPriority = TaskPriority.medium;
 
   @override
   void dispose() {
     _titleController.dispose();
+    _descController.dispose();
     super.dispose();
   }
 
@@ -35,6 +37,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       context.read<TasksBloc>().add(
             AddTask(
               title: _titleController.text.trim(),
+              description: _descController.text.trim().isEmpty ? null : _descController.text.trim(),
               projectId: widget.projectId,
               priority: _selectedPriority,
             ),
@@ -92,13 +95,21 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 label: AppStrings.taskTitle,
                 hintText: AppStrings.taskTitleHint,
                 controller: _titleController,
-                textInputAction: TextInputAction.done,
+                textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return AppStrings.fieldRequired;
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              AppTextField(
+                label: 'Description (Optional)',
+                hintText: 'Enter task description',
+                controller: _descController,
+                textInputAction: TextInputAction.done,
+                maxLines: 2,
               ),
               const SizedBox(height: AppSpacing.lg),
               Column(
@@ -112,7 +123,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   ),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<TaskPriority>(
-                    initialValue: _selectedPriority,
+                    value: _selectedPriority,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Theme.of(context).colorScheme.surface,

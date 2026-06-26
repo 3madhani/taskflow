@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'core/constants/app_colors.dart';
 import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
-import 'core/storage/hive_storage.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/profile/presentation/bloc/theme_bloc.dart';
 import 'features/profile/presentation/bloc/theme_state.dart';
@@ -19,20 +19,18 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
+class GoRouterWrapper {
+  late final GoRouter router;
+
+  GoRouterWrapper() {
+    router = createRouter();
+  }
+
+  void dispose() {}
+}
+
 class _AppState extends State<App> {
   late final GoRouterWrapper _routerWrapper;
-
-  @override
-  void initState() {
-    super.initState();
-    _routerWrapper = GoRouterWrapper(getIt<HiveStorage>());
-  }
-
-  @override
-  void dispose() {
-    _routerWrapper.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +60,52 @@ class _AppState extends State<App> {
             routerConfig: _routerWrapper.router,
           );
         },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _routerWrapper.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _routerWrapper = GoRouterWrapper();
+  }
+
+  ThemeData _darkTheme() {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.primary,
+        brightness: Brightness.dark,
+        surface: AppColors.surfaceDark,
+      ).copyWith(
+        primary: AppColors.primary,
+        secondary: AppColors.secondary,
+        error: AppColors.error,
+        surface: AppColors.surfaceDark,
+      ),
+      scaffoldBackgroundColor: AppColors.backgroundDark,
+      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+      cardTheme: CardThemeData(
+        color: AppColors.surfaceDark,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      navigationBarTheme: const NavigationBarThemeData(
+        backgroundColor: AppColors.surfaceDark,
+        indicatorColor: Color(0x283D5AFE),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.backgroundDark,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
       ),
     );
   }
@@ -99,48 +143,4 @@ class _AppState extends State<App> {
       ),
     );
   }
-
-  ThemeData _darkTheme() {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        brightness: Brightness.dark,
-        surface: AppColors.surfaceDark,
-      ).copyWith(
-        primary: AppColors.primary,
-        secondary: AppColors.secondary,
-        error: AppColors.error,
-        surface: AppColors.surfaceDark,
-      ),
-      scaffoldBackgroundColor: AppColors.backgroundDark,
-      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
-      cardTheme: CardThemeData(
-        color: AppColors.surfaceDark,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-      navigationBarTheme: const NavigationBarThemeData(
-        backgroundColor: AppColors.surfaceDark,
-        indicatorColor: Color(0x283D5AFE),
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.backgroundDark,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-    );
-  }
-}
-
-class GoRouterWrapper {
-  late final GoRouter router;
-
-  GoRouterWrapper(HiveStorage hiveStorage) {
-    router = createRouter(hiveStorage);
-  }
-
-  void dispose() {}
 }

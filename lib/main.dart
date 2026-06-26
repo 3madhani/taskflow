@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/di/injection.dart';
+import 'core/network/supabase_config.dart';
 import 'core/storage/hive_constants.dart';
 import 'features/auth/data/models/user_model.dart';
 import 'features/profile/presentation/bloc/theme_bloc.dart';
@@ -20,11 +22,15 @@ void main() async {
   Hive.registerAdapter(TaskModelAdapter());
 
   await Future.wait([
-    Hive.openBox(HiveBoxes.auth),
-    Hive.openBox(HiveBoxes.projects),
-    Hive.openBox(HiveBoxes.tasks),
+    Hive.openBox<ProjectModel>(HiveBoxes.projects),
+    Hive.openBox<TaskModel>(HiveBoxes.tasks),
     Hive.openBox(HiveBoxes.settings),
   ]);
+
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    anonKey: SupabaseConfig.anonKey,
+  );
 
   configureDependencies();
 

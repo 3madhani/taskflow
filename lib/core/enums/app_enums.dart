@@ -4,6 +4,12 @@ enum ProjectStatus {
   completed,
 }
 
+enum ProjectPriority {
+  low,
+  medium,
+  high,
+}
+
 enum TaskStatus {
   pending,
   inProgress,

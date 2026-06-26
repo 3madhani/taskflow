@@ -4,6 +4,7 @@ import '../../domain/entities/task_entity.dart';
 import '../../domain/usecases/create_task_usecase.dart';
 import '../../domain/usecases/get_tasks_usecase.dart';
 import '../../domain/usecases/update_task_status_usecase.dart';
+import '../../domain/usecases/delete_task_usecase.dart';
 import 'tasks_event.dart';
 import 'tasks_state.dart';
 
@@ -12,15 +13,18 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
   final GetTasksUseCase _getTasksUseCase;
   final UpdateTaskStatusUseCase _updateTaskStatusUseCase;
   final CreateTaskUseCase _createTaskUseCase;
+  final DeleteTaskUseCase _deleteTaskUseCase;
 
   TasksBloc(
     this._getTasksUseCase,
     this._updateTaskStatusUseCase,
     this._createTaskUseCase,
+    this._deleteTaskUseCase,
   ) : super(const TasksInitial()) {
     on<LoadTasks>(_onLoadTasks);
     on<UpdateTaskStatus>(_onUpdateTaskStatus);
     on<AddTask>(_onAddTask);
+    on<DeleteTask>(_onDeleteTask);
   }
 
   Future<void> _onLoadTasks(LoadTasks event, Emitter<TasksState> emit) async {
@@ -71,6 +75,7 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
       title: event.title,
       projectId: event.projectId,
       priority: event.priority,
+      description: event.description,
     );
 
     result.fold(
@@ -78,6 +83,22 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
       (newTask) {
         final updatedTasks = [...currentTasks, newTask];
         emit(TaskAdded(updatedTasks));
+      },
+    );
+  }
+
+  Future<void> _onDeleteTask(DeleteTask event, Emitter<TasksState> emit) async {
+    final currentTasks = _currentTasks();
+    if (currentTasks == null) return;
+
+    final updatedTasks = currentTasks.where((t) => t.id != event.taskId).toList();
+
+    final result = await _deleteTaskUseCase(event.taskId);
+
+    result.fold(
+      (failure) => emit(TasksError(failure.message)),
+      (_) {
+        emit(TasksLoaded(updatedTasks));
       },
     );
   }
@@ -100,3 +121,4 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
     };
   }
 }
+

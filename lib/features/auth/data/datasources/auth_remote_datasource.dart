@@ -1,95 +1,59 @@
-import 'dart:convert';
-
 import 'package:injectable/injectable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/errors/app_exception.dart';
-import '../../../../core/storage/hive_constants.dart';
-import '../../../../core/storage/hive_storage.dart';
 import '../models/user_model.dart';
 
+/// Auth datasource that delegates all authentication to the Supabase Auth SDK.
+/// The SDK stores the JWT in flutter_secure_storage (Android Keystore / iOS Keychain)
+/// and handles token refresh automatically. Do NOT store JWT in Hive manually.
 @injectable
 class AuthRemoteDatasource {
-  final HiveStorage _hiveStorage;
+  final _auth = Supabase.instance.client.auth;
 
-  const AuthRemoteDatasource(this._hiveStorage);
-
-  UserModel? getCachedUser() {
-    return _hiveStorage.read<UserModel>(HiveBoxes.auth, HiveKeys.currentUser);
+  /// Register a new user — creates account in Supabase Auth.
+  /// Supabase sends a confirmation email unless disabled in Auth settings.
+  Future<UserModel> register({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    final response = await _auth.signUp(
+      email: email,
+      password: password,
+      data: {'name': name}, // stored in user_metadata
+    );
+    if (response.user == null) {
+      throw const ServerException('Registration failed. Please try again.');
+    }
+    return UserModel.fromSupabase(response.user!);
   }
 
+  /// Login — returns a session containing the access token (JWT).
+  /// JWT is stored internally by the SDK, not returned to the caller.
   Future<UserModel> login({
     required String email,
     required String password,
   }) async {
-    final emailRegex =
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-    if (!emailRegex.hasMatch(email)) {
-      throw const ValidationException('Please enter a valid email address.');
-    }
-    if (password.length < 6) {
-      throw const ValidationException(
-          'Password must be at least 6 characters.');
-    }
-
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final base64Email = base64Url.encode(utf8.encode(email));
-    final fakeToken = 'fake_jwt_${timestamp}_$base64Email';
-
-    await _hiveStorage.write<String>(HiveBoxes.auth, HiveKeys.token, fakeToken);
-
-    final user = UserModel(
-      id: 1,
-      name: email.split('@').first,
+    final response = await _auth.signInWithPassword(
       email: email,
-      username: email.split('@').first,
-      phone: '1-770-736-8031',
-      website: 'hildegard.org',
+      password: password,
     );
-    await _hiveStorage.write<UserModel>(
-        HiveBoxes.auth, HiveKeys.currentUser, user);
-    return user;
+    if (response.user == null) {
+      throw const UnauthorizedException('Invalid email or password.');
+    }
+    return UserModel.fromSupabase(response.user!);
   }
 
+  /// Logout — clears JWT from flutter_secure_storage.
   Future<void> logout() async {
-    await _hiveStorage.delete(HiveBoxes.auth, HiveKeys.token);
-    await _hiveStorage.delete(HiveBoxes.auth, HiveKeys.currentUser);
+    await _auth.signOut();
   }
 
-  Future<UserModel> register({
-    required String name,
-    required String email,
-    required String password,
-  }) async {
-    if (name.trim().length < 2) {
-      throw const ValidationException('Name must be at least 2 characters.');
-    }
-    final emailRegex =
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-    if (!emailRegex.hasMatch(email)) {
-      throw const ValidationException('Please enter a valid email address.');
-    }
-    if (password.length < 6) {
-      throw const ValidationException(
-          'Password must be at least 6 characters.');
-    }
+  /// Returns the currently authenticated Supabase [User], or null.
+  /// Reads from the in-memory session managed by the SDK.
+  User? get currentUser => _auth.currentUser;
 
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final base64Email = base64Url.encode(utf8.encode(email));
-    final fakeToken = 'fake_jwt_${timestamp}_$base64Email';
-    await _hiveStorage.write<String>(
-        HiveBoxes.auth, HiveKeys.token, fakeToken);
-
-    final newUser = UserModel(
-      id: 1,
-      name: name,
-      email: email,
-      username: email.split('@').first,
-      phone: '1-770-736-8031',
-      website: 'hildegard.org',
-    );
-
-    await _hiveStorage.write<UserModel>(
-        HiveBoxes.auth, HiveKeys.currentUser, newUser);
-    return newUser;
-  }
+  /// Stream of auth state changes — used by AuthBloc to react to sign-in/out/refresh.
+  Stream<AuthState> get authStateChanges => _auth.onAuthStateChange;
 }

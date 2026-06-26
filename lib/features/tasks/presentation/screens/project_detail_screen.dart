@@ -14,9 +14,10 @@ import '../bloc/tasks_event.dart';
 import '../bloc/tasks_state.dart';
 import '../widgets/add_task_bottom_sheet.dart';
 import '../widgets/task_card.dart';
+import '../../domain/entities/task_entity.dart';
 
 class ProjectDetailScreen extends StatefulWidget {
-  final int projectId;
+  final String projectId;
   final ProjectEntity? project;
 
   const ProjectDetailScreen({
@@ -30,6 +31,12 @@ class ProjectDetailScreen extends StatefulWidget {
 }
 
 class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<TasksBloc>().add(LoadTasks(widget.projectId));
+  }
+
   @override
   Widget build(BuildContext context) {
     final project = widget.project;
@@ -57,7 +64,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
               )
             : null,
         title: Text(
-          project?.title ?? 'Project #${widget.projectId}',
+          project?.name ?? 'Project #${widget.projectId.substring(0, 8)}',
           style: AppTextStyles.headingS(),
         ),
       ),
@@ -87,16 +94,10 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    context.read<TasksBloc>().add(LoadTasks(widget.projectId));
-  }
-
   Widget _buildContent(
     BuildContext context,
-    List tasks,
-    int? updatingTaskId,
+    List<TaskEntity> tasks,
+    String? updatingTaskId,
   ) {
     if (tasks.isEmpty) {
       return const EmptyStateWidget(
@@ -107,7 +108,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
     }
 
     return ResponsiveLayout(
-      mobile: (ctx, _) => _TaskListView(
+      mobile: (ctx, _) => TaskListView(
         tasks: tasks,
         updatingTaskId: updatingTaskId,
         horizontalPadding: context.horizontalPadding,
@@ -117,12 +118,12 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
           if (widget.project != null)
             Expanded(
               flex: 2,
-              child: _ProjectInfoPanel(project: widget.project!),
+              child: ProjectInfoPanel(project: widget.project!),
             ),
           if (widget.project != null) const VerticalDivider(width: 1),
           Expanded(
             flex: 3,
-            child: _TaskListView(
+            child: TaskListView(
               tasks: tasks,
               updatingTaskId: updatingTaskId,
               horizontalPadding: context.horizontalPadding,
@@ -142,106 +143,6 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
         value: context.read<TasksBloc>(),
         child: AddTaskBottomSheet(projectId: widget.projectId),
       ),
-    );
-  }
-}
-
-class _ProjectInfoPanel extends StatelessWidget {
-  final ProjectEntity project;
-
-  const _ProjectInfoPanel({required this.project});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.secondary],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child:
-                const Icon(Icons.folder_rounded, color: Colors.white, size: 32),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Text(project.title, style: AppTextStyles.headingM()),
-          const SizedBox(height: AppSpacing.sm),
-          Text(project.description,
-              style: AppTextStyles.bodyM(color: Colors.grey)),
-          const SizedBox(height: AppSpacing.lg),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.sm,
-              vertical: AppSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: _statusColor().withAlpha(25),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _statusColor().withAlpha(80)),
-            ),
-            child: Text(
-              _statusLabel(),
-              style: AppTextStyles.label(color: _statusColor()),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _statusColor() {
-    return switch (project.status) {
-      ProjectStatus.active => AppColors.statusActive,
-      ProjectStatus.onHold => AppColors.statusOnHold,
-      ProjectStatus.completed => AppColors.statusCompleted,
-    };
-  }
-
-  String _statusLabel() {
-    return switch (project.status) {
-      ProjectStatus.active => 'Active',
-      ProjectStatus.onHold => 'On Hold',
-      ProjectStatus.completed => 'Completed',
-    };
-  }
-}
-
-class _TaskListView extends StatelessWidget {
-  final List tasks;
-  final int? updatingTaskId;
-  final double horizontalPadding;
-
-  const _TaskListView({
-    required this.tasks,
-    required this.updatingTaskId,
-    required this.horizontalPadding,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: EdgeInsets.symmetric(
-        horizontal: horizontalPadding,
-        vertical: AppSpacing.lg,
-      ),
-      itemCount: tasks.length,
-      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
-      itemBuilder: (_, i) {
-        final task = tasks[i];
-        return TaskCard(
-          task: task,
-          isUpdating: updatingTaskId == task.id,
-        );
-      },
     );
   }
 }

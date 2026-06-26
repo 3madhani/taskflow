@@ -1,5 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show AuthChangeEvent, Supabase;
+
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
@@ -24,6 +27,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<RegisterRequested>(_onRegisterRequested);
     on<LogoutRequested>(_onLogoutRequested);
     on<CheckAuthStatus>(_onCheckAuthStatus);
+    on<AuthSignOutTriggered>((event, emit) => emit(const AuthUnauthenticated()));
+
+    // Listen to Supabase auth state changes — drives GoRouter redirect.
+    // This replaces the manual token-check pattern.
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      if (event == AuthChangeEvent.signedIn ||
+          event == AuthChangeEvent.tokenRefreshed ||
+          event == AuthChangeEvent.userUpdated) {
+        add(const CheckAuthStatus());
+      } else if (event == AuthChangeEvent.signedOut) {
+        add(const AuthSignOutTriggered());
+      }
+    });
   }
 
   Future<void> _onLoginRequested(
@@ -73,6 +90,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     CheckAuthStatus event,
     Emitter<AuthState> emit,
   ) async {
+    // Reads from Supabase.instance.client.auth.currentUser — NOT from Hive.
     final result = await _authRepository.getCurrentUser();
     result.fold(
       (failure) => emit(const AuthUnauthenticated()),

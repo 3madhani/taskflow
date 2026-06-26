@@ -10,7 +10,6 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
-import 'package:taskflow/core/network/dio_client.dart' as _i209;
 import 'package:taskflow/core/storage/hive_storage.dart' as _i734;
 import 'package:taskflow/features/auth/data/datasources/auth_remote_datasource.dart'
     as _i768;
@@ -36,6 +35,10 @@ import 'package:taskflow/features/projects/data/repositories/projects_repository
     as _i750;
 import 'package:taskflow/features/projects/domain/repositories/projects_repository.dart'
     as _i198;
+import 'package:taskflow/features/projects/domain/usecases/create_project_usecase.dart'
+    as _i172;
+import 'package:taskflow/features/projects/domain/usecases/delete_project_usecase.dart'
+    as _i94;
 import 'package:taskflow/features/projects/domain/usecases/get_projects_usecase.dart'
     as _i255;
 import 'package:taskflow/features/projects/presentation/bloc/projects_bloc.dart'
@@ -50,6 +53,8 @@ import 'package:taskflow/features/tasks/domain/repositories/tasks_repository.dar
     as _i541;
 import 'package:taskflow/features/tasks/domain/usecases/create_task_usecase.dart'
     as _i91;
+import 'package:taskflow/features/tasks/domain/usecases/delete_task_usecase.dart'
+    as _i120;
 import 'package:taskflow/features/tasks/domain/usecases/get_tasks_usecase.dart'
     as _i437;
 import 'package:taskflow/features/tasks/domain/usecases/update_task_status_usecase.dart'
@@ -68,9 +73,12 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
+    gh.factory<_i768.AuthRemoteDatasource>(() => _i768.AuthRemoteDatasource());
+    gh.factory<_i981.ProjectsRemoteDatasource>(
+        () => _i981.ProjectsRemoteDatasource());
+    gh.factory<_i925.TasksRemoteDatasource>(
+        () => _i925.TasksRemoteDatasource());
     gh.singleton<_i734.HiveStorage>(() => const _i734.HiveStorage());
-    gh.factory<_i768.AuthRemoteDatasource>(
-        () => _i768.AuthRemoteDatasource(gh<_i734.HiveStorage>()));
     gh.factory<_i849.ProjectsLocalDatasource>(
         () => _i849.ProjectsLocalDatasource(gh<_i734.HiveStorage>()));
     gh.factory<_i275.TasksLocalDatasource>(
@@ -79,12 +87,18 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i633.ThemeBloc(gh<_i734.HiveStorage>()));
     gh.factory<_i697.AuthRepository>(
         () => _i860.AuthRepositoryImpl(gh<_i768.AuthRemoteDatasource>()));
-    gh.singleton<_i209.DioClient>(
-        () => _i209.DioClient(gh<_i734.HiveStorage>()));
-    gh.factory<_i981.ProjectsRemoteDatasource>(
-        () => _i981.ProjectsRemoteDatasource(gh<_i209.DioClient>()));
-    gh.factory<_i925.TasksRemoteDatasource>(
-        () => _i925.TasksRemoteDatasource(gh<_i209.DioClient>()));
+    gh.factory<_i541.TasksRepository>(() => _i536.TasksRepositoryImpl(
+          gh<_i925.TasksRemoteDatasource>(),
+          gh<_i275.TasksLocalDatasource>(),
+        ));
+    gh.factory<_i91.CreateTaskUseCase>(
+        () => _i91.CreateTaskUseCase(gh<_i541.TasksRepository>()));
+    gh.factory<_i120.DeleteTaskUseCase>(
+        () => _i120.DeleteTaskUseCase(gh<_i541.TasksRepository>()));
+    gh.factory<_i437.GetTasksUseCase>(
+        () => _i437.GetTasksUseCase(gh<_i541.TasksRepository>()));
+    gh.factory<_i435.UpdateTaskStatusUseCase>(
+        () => _i435.UpdateTaskStatusUseCase(gh<_i541.TasksRepository>()));
     gh.factory<_i198.ProjectsRepository>(() => _i750.ProjectsRepositoryImpl(
           gh<_i981.ProjectsRemoteDatasource>(),
           gh<_i849.ProjectsLocalDatasource>(),
@@ -95,30 +109,28 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i469.LogoutUseCase(gh<_i697.AuthRepository>()));
     gh.factory<_i437.RegisterUseCase>(
         () => _i437.RegisterUseCase(gh<_i697.AuthRepository>()));
+    gh.factory<_i172.CreateProjectUseCase>(
+        () => _i172.CreateProjectUseCase(gh<_i198.ProjectsRepository>()));
+    gh.factory<_i94.DeleteProjectUseCase>(
+        () => _i94.DeleteProjectUseCase(gh<_i198.ProjectsRepository>()));
     gh.factory<_i255.GetProjectsUseCase>(
         () => _i255.GetProjectsUseCase(gh<_i198.ProjectsRepository>()));
-    gh.factory<_i794.ProjectsBloc>(
-        () => _i794.ProjectsBloc(gh<_i255.GetProjectsUseCase>()));
+    gh.factory<_i61.TasksBloc>(() => _i61.TasksBloc(
+          gh<_i437.GetTasksUseCase>(),
+          gh<_i435.UpdateTaskStatusUseCase>(),
+          gh<_i91.CreateTaskUseCase>(),
+          gh<_i120.DeleteTaskUseCase>(),
+        ));
     gh.factory<_i662.AuthBloc>(() => _i662.AuthBloc(
           gh<_i787.LoginUseCase>(),
           gh<_i437.RegisterUseCase>(),
           gh<_i469.LogoutUseCase>(),
           gh<_i697.AuthRepository>(),
         ));
-    gh.factory<_i541.TasksRepository>(() => _i536.TasksRepositoryImpl(
-          gh<_i925.TasksRemoteDatasource>(),
-          gh<_i275.TasksLocalDatasource>(),
-        ));
-    gh.factory<_i91.CreateTaskUseCase>(
-        () => _i91.CreateTaskUseCase(gh<_i541.TasksRepository>()));
-    gh.factory<_i437.GetTasksUseCase>(
-        () => _i437.GetTasksUseCase(gh<_i541.TasksRepository>()));
-    gh.factory<_i435.UpdateTaskStatusUseCase>(
-        () => _i435.UpdateTaskStatusUseCase(gh<_i541.TasksRepository>()));
-    gh.factory<_i61.TasksBloc>(() => _i61.TasksBloc(
-          gh<_i437.GetTasksUseCase>(),
-          gh<_i435.UpdateTaskStatusUseCase>(),
-          gh<_i91.CreateTaskUseCase>(),
+    gh.factory<_i794.ProjectsBloc>(() => _i794.ProjectsBloc(
+          gh<_i255.GetProjectsUseCase>(),
+          gh<_i172.CreateProjectUseCase>(),
+          gh<_i94.DeleteProjectUseCase>(),
         ));
     return this;
   }

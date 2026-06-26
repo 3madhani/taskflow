@@ -42,3 +42,11 @@ class CheckAuthStatus extends AuthEvent {
   @override
   List<Object?> get props => [];
 }
+
+class AuthSignOutTriggered extends AuthEvent {
+  const AuthSignOutTriggered();
+
+  @override
+  List<Object?> get props => [];
+}
+

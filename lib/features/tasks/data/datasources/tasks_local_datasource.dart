@@ -13,7 +13,7 @@ class TasksLocalDatasource {
 
   HiveStorage get hiveStorage => _hiveStorage;
 
-  Future<void> cacheTasks(int projectId, List<TaskModel> tasks) async {
+  Future<void> cacheTasks(String projectId, List<TaskModel> tasks) async {
     try {
       final map = {
         for (var t in tasks) '${projectId}_${t.id}': t,
@@ -24,7 +24,7 @@ class TasksLocalDatasource {
     }
   }
 
-  List<TaskModel> getCachedTasks(int projectId) {
+  List<TaskModel> getCachedTasks(String projectId) {
     try {
       final all = _hiveStorage.readAll<TaskModel>(HiveBoxes.tasks);
       return all.where((t) => t.projectId == projectId).toList();
@@ -42,6 +42,14 @@ class TasksLocalDatasource {
       );
     } catch (e) {
       throw CacheException('Failed to save task: ${e.toString()}');
+    }
+  }
+
+  Future<void> deleteTask(String projectId, String taskId) async {
+    try {
+      await _hiveStorage.delete(HiveBoxes.tasks, '${projectId}_$taskId');
+    } catch (e) {
+      throw CacheException('Failed to delete cached task: ${e.toString()}');
     }
   }
 }

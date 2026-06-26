@@ -11,7 +11,7 @@ class UpdateTaskStatusUseCase {
   const UpdateTaskStatusUseCase(this._repository);
 
   Future<Either<Failure, TaskEntity>> call({
-    required int taskId,
+    required String taskId,
     required TaskStatus newStatus,
   }) {
     return _repository.updateTaskStatus(taskId: taskId, newStatus: newStatus);

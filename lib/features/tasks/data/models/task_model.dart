@@ -9,26 +9,34 @@ part 'task_model.g.dart';
 @JsonSerializable()
 class TaskModel extends HiveObject {
   @HiveField(0)
-  final int id;
+  final String id;
 
   @HiveField(1)
-  final String title;
+  final String projectId;
 
   @HiveField(2)
-  final int projectId;
+  final String title;
 
   @HiveField(3)
-  final String status;
+  final String? description;
 
   @HiveField(4)
-  final String priority;
+  final String status; // 'pending' | 'in_progress' | 'done'
+
+  @HiveField(5)
+  final String priority; // 'low' | 'medium' | 'high'
+
+  @HiveField(6)
+  final String createdAt;
 
   TaskModel({
     required this.id,
-    required this.title,
     required this.projectId,
+    required this.title,
+    this.description,
     required this.status,
     required this.priority,
+    required this.createdAt,
   });
 
   factory TaskModel.fromEntity(TaskEntity entity) {
@@ -44,42 +52,26 @@ class TaskModel extends HiveObject {
         statusStr = 'pending';
     }
 
-    String priorityStr;
-    switch (entity.priority) {
-      case TaskPriority.medium:
-        priorityStr = 'medium';
-        break;
-      case TaskPriority.high:
-        priorityStr = 'high';
-        break;
-      default:
-        priorityStr = 'low';
-    }
-
     return TaskModel(
       id: entity.id,
-      title: entity.title,
       projectId: entity.projectId,
+      title: entity.title,
+      description: entity.description,
       status: statusStr,
-      priority: priorityStr,
+      priority: entity.priority.name,
+      createdAt: entity.createdAt.toIso8601String(),
     );
   }
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
-    final id = json['id'] as int;
-    final albumId = json['albumId'] as int? ?? 0;
-    final title = json['title'] as String? ?? '';
-
-    final statusStr =
-        id % 3 == 0 ? 'pending' : (id % 3 == 1 ? 'in_progress' : 'done');
-    final priorityStr = id % 3 == 0 ? 'low' : (id % 3 == 1 ? 'medium' : 'high');
-
     return TaskModel(
-      id: id,
-      title: title,
-      projectId: albumId,
-      status: statusStr,
-      priority: priorityStr,
+      id: json['id'] as String,
+      projectId: json['project_id'] as String,
+      title: json['title'] as String,
+      description: json['description'] as String?,
+      status: json['status'] as String? ?? 'pending',
+      priority: json['priority'] as String? ?? 'medium',
+      createdAt: json['created_at'] as String,
     );
   }
 
@@ -96,24 +88,14 @@ class TaskModel extends HiveObject {
         entityStatus = TaskStatus.pending;
     }
 
-    TaskPriority entityPriority;
-    switch (priority) {
-      case 'medium':
-        entityPriority = TaskPriority.medium;
-        break;
-      case 'high':
-        entityPriority = TaskPriority.high;
-        break;
-      default:
-        entityPriority = TaskPriority.low;
-    }
-
     return TaskEntity(
       id: id,
-      title: title,
       projectId: projectId,
+      title: title,
+      description: description,
       status: entityStatus,
-      priority: entityPriority,
+      priority: TaskPriority.values.byName(priority),
+      createdAt: DateTime.parse(createdAt),
     );
   }
 

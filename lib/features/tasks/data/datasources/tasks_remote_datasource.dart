@@ -1,72 +1,57 @@
-import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../core/network/api_endpoints.dart';
-import '../../../../core/network/dio_client.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../models/task_model.dart';
 
 @injectable
 class TasksRemoteDatasource {
-  final DioClient _dioClient;
+  final _db = Supabase.instance.client;
 
-  const TasksRemoteDatasource(this._dioClient);
-
-  Future<List<TaskModel>> getTasksByProject(int projectId) async {
-    try {
-      final response = await _dioClient.dio.get(
-        ApiEndpoints.photosByAlbum(projectId),
-      );
-      final data = response.data as List<dynamic>;
-      return data
-          .map((json) => TaskModel.fromJson(json as Map<String, dynamic>))
-          .toList();
-    } on DioException catch (e) {
-      throw e.appException;
-    }
+  /// GET tasks for a specific project
+  Future<List<TaskModel>> getTasks(String projectId) async {
+    final response = await _db
+        .from('tasks')
+        .select()
+        .eq('project_id', projectId)
+        .order('created_at', ascending: true);
+    return (response as List)
+        .map((json) => TaskModel.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
-  Future<TaskModel> updateTaskStatus({
-    required int taskId,
-    required String newStatus,
-  }) async {
-    try {
-      final response = await _dioClient.dio.patch(
-        ApiEndpoints.photoById(taskId),
-        data: {'status': newStatus},
-      );
-      final data = response.data as Map<String, dynamic>;
-      data['status'] = newStatus;
-      return TaskModel.fromJson(data);
-    } on DioException catch (e) {
-      throw e.appException;
-    }
-  }
-
+  /// POST — create task
   Future<TaskModel> createTask({
+    required String projectId,
     required String title,
-    required int projectId,
+    String? description,
     required String priority,
   }) async {
-    try {
-      final response = await _dioClient.dio.post(
-        ApiEndpoints.photos,
-        data: {
-          'title': title,
-          'albumId': projectId,
-          'url': 'https://via.placeholder.com/600/92c952',
-          'thumbnailUrl': 'https://via.placeholder.com/150/92c952',
-          'priority': priority,
-        },
-      );
-      final data = response.data as Map<String, dynamic>;
-      return TaskModel(
-        id: data['id'] as int? ?? DateTime.now().millisecondsSinceEpoch,
-        title: title,
-        projectId: projectId,
-        status: 'pending',
-        priority: priority,
-      );
-    } on DioException catch (e) {
-      throw e.appException;
-    }
+    final response = await _db.from('tasks').insert({
+      'project_id': projectId,
+      'title': title,
+      'description': description,
+      'status': 'pending',
+      'priority': priority,
+    }).select().single();
+    return TaskModel.fromJson(response as Map<String, dynamic>);
+  }
+
+  /// PATCH — update task status (cycle: pending → in_progress → done)
+  Future<TaskModel> updateTaskStatus({
+    required String taskId,
+    required String status,
+  }) async {
+    final response = await _db
+        .from('tasks')
+        .update({'status': status})
+        .eq('id', taskId)
+        .select()
+        .single();
+    return TaskModel.fromJson(response as Map<String, dynamic>);
+  }
+
+  /// DELETE — remove a task
+  Future<void> deleteTask(String taskId) async {
+    await _db.from('tasks').delete().eq('id', taskId);
   }
 }

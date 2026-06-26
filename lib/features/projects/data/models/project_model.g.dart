@@ -17,25 +17,34 @@ class ProjectModelAdapter extends TypeAdapter<ProjectModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ProjectModel(
-      id: fields[0] as int,
-      title: fields[1] as String,
-      description: fields[2] as String,
-      status: fields[3] as String,
+      id: fields[0] as String,
+      userId: fields[1] as String,
+      name: fields[2] as String,
+      description: fields[3] as String?,
+      status: fields[4] as String,
+      priority: fields[5] as String,
+      createdAt: fields[6] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, ProjectModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.title)
+      ..write(obj.userId)
       ..writeByte(2)
-      ..write(obj.description)
+      ..write(obj.name)
       ..writeByte(3)
-      ..write(obj.status);
+      ..write(obj.description)
+      ..writeByte(4)
+      ..write(obj.status)
+      ..writeByte(5)
+      ..write(obj.priority)
+      ..writeByte(6)
+      ..write(obj.createdAt);
   }
 
   @override
@@ -54,16 +63,27 @@ class ProjectModelAdapter extends TypeAdapter<ProjectModel> {
 // **************************************************************************
 
 ProjectModel _$ProjectModelFromJson(Map<String, dynamic> json) => ProjectModel(
-      id: (json['id'] as num).toInt(),
-      title: json['title'] as String,
-      description: json['description'] as String,
+      id: json['id'] as String,
+      userId: json['userId'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String?,
       status: json['status'] as String,
+      priority: json['priority'] as String,
+      createdAt: json['createdAt'] as String,
+      tasks: (json['tasks'] as List<dynamic>?)
+              ?.map((e) => e as Map<String, dynamic>)
+              .toList() ??
+          [],
     );
 
 Map<String, dynamic> _$ProjectModelToJson(ProjectModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'title': instance.title,
+      'userId': instance.userId,
+      'name': instance.name,
       'description': instance.description,
       'status': instance.status,
+      'priority': instance.priority,
+      'createdAt': instance.createdAt,
+      'tasks': instance.tasks,
     };

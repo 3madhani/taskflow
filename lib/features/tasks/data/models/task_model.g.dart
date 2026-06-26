@@ -17,28 +17,34 @@ class TaskModelAdapter extends TypeAdapter<TaskModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return TaskModel(
-      id: fields[0] as int,
-      title: fields[1] as String,
-      projectId: fields[2] as int,
-      status: fields[3] as String,
-      priority: fields[4] as String,
+      id: fields[0] as String,
+      projectId: fields[1] as String,
+      title: fields[2] as String,
+      description: fields[3] as String?,
+      status: fields[4] as String,
+      priority: fields[5] as String,
+      createdAt: fields[6] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, TaskModel obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.title)
-      ..writeByte(2)
       ..write(obj.projectId)
+      ..writeByte(2)
+      ..write(obj.title)
       ..writeByte(3)
-      ..write(obj.status)
+      ..write(obj.description)
       ..writeByte(4)
-      ..write(obj.priority);
+      ..write(obj.status)
+      ..writeByte(5)
+      ..write(obj.priority)
+      ..writeByte(6)
+      ..write(obj.createdAt);
   }
 
   @override
@@ -57,17 +63,21 @@ class TaskModelAdapter extends TypeAdapter<TaskModel> {
 // **************************************************************************
 
 TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
-      id: (json['id'] as num).toInt(),
+      id: json['id'] as String,
+      projectId: json['projectId'] as String,
       title: json['title'] as String,
-      projectId: (json['projectId'] as num).toInt(),
+      description: json['description'] as String?,
       status: json['status'] as String,
       priority: json['priority'] as String,
+      createdAt: json['createdAt'] as String,
     );
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'id': instance.id,
-      'title': instance.title,
       'projectId': instance.projectId,
+      'title': instance.title,
+      'description': instance.description,
       'status': instance.status,
       'priority': instance.priority,
+      'createdAt': instance.createdAt,
     };

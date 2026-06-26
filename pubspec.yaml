@@ -18,8 +18,8 @@ dependencies:
   # Navigation
   go_router: ^13.2.1
 
-  # HTTP
-  dio: ^5.4.3
+  # Backend — Supabase (auth + REST API + JWT auto-managed)
+  supabase_flutter: ^2.3.0
 
   # Local Storage (Hive)
   hive: ^2.2.3

@@ -1,16 +1,15 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
-import '../entities/task_entity.dart';
 import '../repositories/tasks_repository.dart';
 
 @injectable
-class GetTasksUseCase {
+class DeleteTaskUseCase {
   final TasksRepository _repository;
 
-  const GetTasksUseCase(this._repository);
+  const DeleteTaskUseCase(this._repository);
 
-  Future<Either<Failure, List<TaskEntity>>> call(String projectId) {
-    return _repository.getTasksByProject(projectId);
+  Future<Either<Failure, void>> call(String taskId) {
+    return _repository.deleteTask(taskId);
   }
 }

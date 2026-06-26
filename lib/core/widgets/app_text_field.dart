@@ -15,6 +15,7 @@ class AppTextField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final void Function(String)? onFieldSubmitted;
   final FocusNode? focusNode;
+  final int maxLines;
 
   const AppTextField({
     required this.label,
@@ -28,6 +29,7 @@ class AppTextField extends StatefulWidget {
     this.textInputAction,
     this.onFieldSubmitted,
     this.focusNode,
+    this.maxLines = 1,
     super.key,
   });
 
@@ -57,6 +59,7 @@ class _AppTextFieldState extends State<AppTextField> {
           textInputAction: widget.textInputAction,
           onFieldSubmitted: widget.onFieldSubmitted,
           focusNode: widget.focusNode,
+          maxLines: widget.maxLines,
           style: AppTextStyles.bodyL(),
           decoration: InputDecoration(
             hintText: widget.hintText,

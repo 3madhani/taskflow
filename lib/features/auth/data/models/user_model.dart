@@ -1,38 +1,36 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/entities/user_entity.dart';
 
 part 'user_model.g.dart';
 
+// Hive typeId: 0 — never reuse this typeId
 @HiveType(typeId: 0)
 @JsonSerializable()
 class UserModel extends HiveObject {
   @HiveField(0)
-  final int id;
+  final String id;
 
   @HiveField(1)
-  final String name;
-
-  @HiveField(2)
   final String email;
 
-  @HiveField(3)
-  final String username;
-
-  @HiveField(4)
-  final String phone;
-
-  @HiveField(5)
-  final String website;
+  @HiveField(2)
+  final String? name;
 
   UserModel({
     required this.id,
-    required this.name,
     required this.email,
-    required this.username,
-    required this.phone,
-    required this.website,
+    this.name,
   });
+
+  /// Build a UserModel from a Supabase Auth [User] object.
+  /// JWT is managed automatically by the SDK — we only cache the profile data.
+  factory UserModel.fromSupabase(User user) => UserModel(
+        id: user.id,
+        email: user.email ?? '',
+        name: user.userMetadata?['name'] as String?,
+      );
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
@@ -41,19 +39,13 @@ class UserModel extends HiveObject {
 
   UserEntity toEntity() => UserEntity(
         id: id,
-        name: name,
         email: email,
-        username: username,
-        phone: phone,
-        website: website,
+        name: name,
       );
 
   factory UserModel.fromEntity(UserEntity entity) => UserModel(
         id: entity.id,
-        name: entity.name,
         email: entity.email,
-        username: entity.username,
-        phone: entity.phone,
-        website: entity.website,
+        name: entity.name,
       );
 }

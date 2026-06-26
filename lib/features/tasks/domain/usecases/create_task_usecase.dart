@@ -12,13 +12,15 @@ class CreateTaskUseCase {
 
   Future<Either<Failure, TaskEntity>> call({
     required String title,
-    required int projectId,
+    required String projectId,
     required TaskPriority priority,
+    String? description,
   }) {
     return _repository.createTask(
       title: title,
       projectId: projectId,
       priority: priority,
+      description: description,
     );
   }
 }

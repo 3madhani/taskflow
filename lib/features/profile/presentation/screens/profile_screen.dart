@@ -14,6 +14,8 @@ import '../bloc/theme_bloc.dart';
 import '../bloc/theme_event.dart';
 import '../bloc/theme_state.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -50,11 +52,19 @@ class ProfileScreen extends StatelessWidget {
               sliver: SliverToBoxAdapter(
                 child: BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, authState) {
-                    final user =
-                        authState is AuthAuthenticated ? authState.user : null;
+                    String? name;
+                    String? email;
+                    if (authState is AuthAuthenticated) {
+                      name = authState.user.name;
+                      email = authState.user.email;
+                    } else {
+                      final supabaseUser = Supabase.instance.client.auth.currentUser;
+                      name = supabaseUser?.userMetadata?['name'] as String?;
+                      email = supabaseUser?.email;
+                    }
                     return Column(
                       children: [
-                        _buildProfileHeader(context, user?.name, user?.email),
+                        _buildProfileHeader(context, name, email),
                         const SizedBox(height: AppSpacing.xl),
                         _buildThemeSection(context),
                         const SizedBox(height: AppSpacing.lg),
